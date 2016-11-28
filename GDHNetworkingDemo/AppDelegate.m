@@ -26,7 +26,6 @@ static NSString * const baseURL = @"http://op.juhe.cn/";
     // Override point for customization after application launch.
     
     //监听网络状态
-    //[GDHNetworkObject startMonitoringNetwork];
     [GDHNetworkingObject StartMonitoringNetworkStatus:^(GDHNetworkStatus status) {
         switch (status) {
             case GDHNetworkStatusUnknown://未知网络
