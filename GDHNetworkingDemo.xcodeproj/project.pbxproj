@@ -1,0 +1,665 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		14D354F52BC4B68DF75AE99D /* libPods-GDHNetworkingDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 40B2AF83FB7B30A78AF7754C /* libPods-GDHNetworkingDemo.a */; };
+		A603ACD21DEBDD8C005C5E4B /* error.png in Resources */ = {isa = PBXBuildFile; fileRef = A603ACCE1DEBDD8C005C5E4B /* error.png */; };
+		A603ACD31DEBDD8C005C5E4B /* error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A603ACCF1DEBDD8C005C5E4B /* error@2x.png */; };
+		A603ACD41DEBDD8C005C5E4B /* success.png in Resources */ = {isa = PBXBuildFile; fileRef = A603ACD01DEBDD8C005C5E4B /* success.png */; };
+		A603ACD51DEBDD8C005C5E4B /* success@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A603ACD11DEBDD8C005C5E4B /* success@2x.png */; };
+		A603ACD81DEBDED7005C5E4B /* GDHNetworkAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = A603ACD71DEBDED7005C5E4B /* GDHNetworkAPI.m */; };
+		A6F8FA331DEBD7A8001ED6C5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F8FA321DEBD7A8001ED6C5 /* main.m */; };
+		A6F8FA361DEBD7A8001ED6C5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F8FA351DEBD7A8001ED6C5 /* AppDelegate.m */; };
+		A6F8FA391DEBD7A8001ED6C5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F8FA381DEBD7A8001ED6C5 /* ViewController.m */; };
+		A6F8FA3C1DEBD7A8001ED6C5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A6F8FA3A1DEBD7A8001ED6C5 /* Main.storyboard */; };
+		A6F8FA3E1DEBD7A8001ED6C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A6F8FA3D1DEBD7A8001ED6C5 /* Assets.xcassets */; };
+		A6F8FA411DEBD7A8001ED6C5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A6F8FA3F1DEBD7A8001ED6C5 /* LaunchScreen.storyboard */; };
+		A6F8FA4C1DEBD7A9001ED6C5 /* GDHNetworkingDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F8FA4B1DEBD7A8001ED6C5 /* GDHNetworkingDemoTests.m */; };
+		A6F8FA571DEBD7A9001ED6C5 /* GDHNetworkingDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F8FA561DEBD7A9001ED6C5 /* GDHNetworkingDemoUITests.m */; };
+		A6F8FA671DEBD88D001ED6C5 /* GDHNetworkingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6F8FA661DEBD88D001ED6C5 /* GDHNetworkingManager.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A6F8FA481DEBD7A8001ED6C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6F8FA261DEBD7A8001ED6C5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A6F8FA2D1DEBD7A8001ED6C5;
+			remoteInfo = GDHNetworkingDemo;
+		};
+		A6F8FA531DEBD7A9001ED6C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6F8FA261DEBD7A8001ED6C5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A6F8FA2D1DEBD7A8001ED6C5;
+			remoteInfo = GDHNetworkingDemo;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		40B2AF83FB7B30A78AF7754C /* libPods-GDHNetworkingDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GDHNetworkingDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E480336901FAB1E2D93F31D /* Pods-GDHNetworkingDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GDHNetworkingDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-GDHNetworkingDemo/Pods-GDHNetworkingDemo.release.xcconfig"; sourceTree = "<group>"; };
+		A603ACCE1DEBDD8C005C5E4B /* error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = error.png; sourceTree = "<group>"; };
+		A603ACCF1DEBDD8C005C5E4B /* error@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "error@2x.png"; sourceTree = "<group>"; };
+		A603ACD01DEBDD8C005C5E4B /* success.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = success.png; sourceTree = "<group>"; };
+		A603ACD11DEBDD8C005C5E4B /* success@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "success@2x.png"; sourceTree = "<group>"; };
+		A603ACD61DEBDED7005C5E4B /* GDHNetworkAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDHNetworkAPI.h; sourceTree = "<group>"; };
+		A603ACD71DEBDED7005C5E4B /* GDHNetworkAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GDHNetworkAPI.m; sourceTree = "<group>"; };
+		A6F8FA2E1DEBD7A8001ED6C5 /* GDHNetworkingDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GDHNetworkingDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6F8FA321DEBD7A8001ED6C5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A6F8FA341DEBD7A8001ED6C5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		A6F8FA351DEBD7A8001ED6C5 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		A6F8FA371DEBD7A8001ED6C5 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		A6F8FA381DEBD7A8001ED6C5 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		A6F8FA3B1DEBD7A8001ED6C5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A6F8FA3D1DEBD7A8001ED6C5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A6F8FA401DEBD7A8001ED6C5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A6F8FA421DEBD7A8001ED6C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A6F8FA471DEBD7A8001ED6C5 /* GDHNetworkingDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GDHNetworkingDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6F8FA4B1DEBD7A8001ED6C5 /* GDHNetworkingDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GDHNetworkingDemoTests.m; sourceTree = "<group>"; };
+		A6F8FA4D1DEBD7A9001ED6C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A6F8FA521DEBD7A9001ED6C5 /* GDHNetworkingDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GDHNetworkingDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6F8FA561DEBD7A9001ED6C5 /* GDHNetworkingDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GDHNetworkingDemoUITests.m; sourceTree = "<group>"; };
+		A6F8FA581DEBD7A9001ED6C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A6F8FA651DEBD88D001ED6C5 /* GDHNetworkingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDHNetworkingManager.h; sourceTree = "<group>"; };
+		A6F8FA661DEBD88D001ED6C5 /* GDHNetworkingManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GDHNetworkingManager.m; sourceTree = "<group>"; };
+		C53EAEECE527A945B11B2AE4 /* Pods-GDHNetworkingDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GDHNetworkingDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GDHNetworkingDemo/Pods-GDHNetworkingDemo.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A6F8FA2B1DEBD7A8001ED6C5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14D354F52BC4B68DF75AE99D /* libPods-GDHNetworkingDemo.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6F8FA441DEBD7A8001ED6C5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6F8FA4F1DEBD7A9001ED6C5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		50F22414864DA4A124B68CB7 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C53EAEECE527A945B11B2AE4 /* Pods-GDHNetworkingDemo.debug.xcconfig */,
+				9E480336901FAB1E2D93F31D /* Pods-GDHNetworkingDemo.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		A603ACCD1DEBDD8C005C5E4B /* images */ = {
+			isa = PBXGroup;
+			children = (
+				A603ACCE1DEBDD8C005C5E4B /* error.png */,
+				A603ACCF1DEBDD8C005C5E4B /* error@2x.png */,
+				A603ACD01DEBDD8C005C5E4B /* success.png */,
+				A603ACD11DEBDD8C005C5E4B /* success@2x.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		A6F8FA251DEBD7A8001ED6C5 = {
+			isa = PBXGroup;
+			children = (
+				A6F8FA301DEBD7A8001ED6C5 /* GDHNetworkingDemo */,
+				A6F8FA4A1DEBD7A8001ED6C5 /* GDHNetworkingDemoTests */,
+				A6F8FA551DEBD7A9001ED6C5 /* GDHNetworkingDemoUITests */,
+				A6F8FA2F1DEBD7A8001ED6C5 /* Products */,
+				50F22414864DA4A124B68CB7 /* Pods */,
+				DFBAEC3F55A4F9DE25B61DC8 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		A6F8FA2F1DEBD7A8001ED6C5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A6F8FA2E1DEBD7A8001ED6C5 /* GDHNetworkingDemo.app */,
+				A6F8FA471DEBD7A8001ED6C5 /* GDHNetworkingDemoTests.xctest */,
+				A6F8FA521DEBD7A9001ED6C5 /* GDHNetworkingDemoUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A6F8FA301DEBD7A8001ED6C5 /* GDHNetworkingDemo */ = {
+			isa = PBXGroup;
+			children = (
+				A6F8FA641DEBD864001ED6C5 /* GDHNetworking */,
+				A6F8FA341DEBD7A8001ED6C5 /* AppDelegate.h */,
+				A6F8FA351DEBD7A8001ED6C5 /* AppDelegate.m */,
+				A6F8FA371DEBD7A8001ED6C5 /* ViewController.h */,
+				A6F8FA381DEBD7A8001ED6C5 /* ViewController.m */,
+				A603ACD61DEBDED7005C5E4B /* GDHNetworkAPI.h */,
+				A603ACD71DEBDED7005C5E4B /* GDHNetworkAPI.m */,
+				A6F8FA3A1DEBD7A8001ED6C5 /* Main.storyboard */,
+				A6F8FA3D1DEBD7A8001ED6C5 /* Assets.xcassets */,
+				A6F8FA3F1DEBD7A8001ED6C5 /* LaunchScreen.storyboard */,
+				A6F8FA421DEBD7A8001ED6C5 /* Info.plist */,
+				A6F8FA311DEBD7A8001ED6C5 /* Supporting Files */,
+			);
+			path = GDHNetworkingDemo;
+			sourceTree = "<group>";
+		};
+		A6F8FA311DEBD7A8001ED6C5 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				A6F8FA321DEBD7A8001ED6C5 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A6F8FA4A1DEBD7A8001ED6C5 /* GDHNetworkingDemoTests */ = {
+			isa = PBXGroup;
+			children = (
+				A6F8FA4B1DEBD7A8001ED6C5 /* GDHNetworkingDemoTests.m */,
+				A6F8FA4D1DEBD7A9001ED6C5 /* Info.plist */,
+			);
+			path = GDHNetworkingDemoTests;
+			sourceTree = "<group>";
+		};
+		A6F8FA551DEBD7A9001ED6C5 /* GDHNetworkingDemoUITests */ = {
+			isa = PBXGroup;
+			children = (
+				A6F8FA561DEBD7A9001ED6C5 /* GDHNetworkingDemoUITests.m */,
+				A6F8FA581DEBD7A9001ED6C5 /* Info.plist */,
+			);
+			path = GDHNetworkingDemoUITests;
+			sourceTree = "<group>";
+		};
+		A6F8FA641DEBD864001ED6C5 /* GDHNetworking */ = {
+			isa = PBXGroup;
+			children = (
+				A6F8FA651DEBD88D001ED6C5 /* GDHNetworkingManager.h */,
+				A6F8FA661DEBD88D001ED6C5 /* GDHNetworkingManager.m */,
+				A603ACCD1DEBDD8C005C5E4B /* images */,
+			);
+			path = GDHNetworking;
+			sourceTree = SOURCE_ROOT;
+		};
+		DFBAEC3F55A4F9DE25B61DC8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				40B2AF83FB7B30A78AF7754C /* libPods-GDHNetworkingDemo.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A6F8FA2D1DEBD7A8001ED6C5 /* GDHNetworkingDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A6F8FA5B1DEBD7A9001ED6C5 /* Build configuration list for PBXNativeTarget "GDHNetworkingDemo" */;
+			buildPhases = (
+				F36DD565D225D0C3CC6046DE /* [CP] Check Pods Manifest.lock */,
+				A6F8FA2A1DEBD7A8001ED6C5 /* Sources */,
+				A6F8FA2B1DEBD7A8001ED6C5 /* Frameworks */,
+				A6F8FA2C1DEBD7A8001ED6C5 /* Resources */,
+				C2F405F83E79DC8461B9E78C /* [CP] Embed Pods Frameworks */,
+				A8ECE045BEF917A409979DC7 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GDHNetworkingDemo;
+			productName = GDHNetworkingDemo;
+			productReference = A6F8FA2E1DEBD7A8001ED6C5 /* GDHNetworkingDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A6F8FA461DEBD7A8001ED6C5 /* GDHNetworkingDemoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A6F8FA5E1DEBD7A9001ED6C5 /* Build configuration list for PBXNativeTarget "GDHNetworkingDemoTests" */;
+			buildPhases = (
+				A6F8FA431DEBD7A8001ED6C5 /* Sources */,
+				A6F8FA441DEBD7A8001ED6C5 /* Frameworks */,
+				A6F8FA451DEBD7A8001ED6C5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A6F8FA491DEBD7A8001ED6C5 /* PBXTargetDependency */,
+			);
+			name = GDHNetworkingDemoTests;
+			productName = GDHNetworkingDemoTests;
+			productReference = A6F8FA471DEBD7A8001ED6C5 /* GDHNetworkingDemoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A6F8FA511DEBD7A9001ED6C5 /* GDHNetworkingDemoUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A6F8FA611DEBD7A9001ED6C5 /* Build configuration list for PBXNativeTarget "GDHNetworkingDemoUITests" */;
+			buildPhases = (
+				A6F8FA4E1DEBD7A9001ED6C5 /* Sources */,
+				A6F8FA4F1DEBD7A9001ED6C5 /* Frameworks */,
+				A6F8FA501DEBD7A9001ED6C5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A6F8FA541DEBD7A9001ED6C5 /* PBXTargetDependency */,
+			);
+			name = GDHNetworkingDemoUITests;
+			productName = GDHNetworkingDemoUITests;
+			productReference = A6F8FA521DEBD7A9001ED6C5 /* GDHNetworkingDemoUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A6F8FA261DEBD7A8001ED6C5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0810;
+				ORGANIZATIONNAME = GaoFei;
+				TargetAttributes = {
+					A6F8FA2D1DEBD7A8001ED6C5 = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = 3858N9SG7V;
+						ProvisioningStyle = Automatic;
+					};
+					A6F8FA461DEBD7A8001ED6C5 = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = XQAXV8H896;
+						ProvisioningStyle = Automatic;
+						TestTargetID = A6F8FA2D1DEBD7A8001ED6C5;
+					};
+					A6F8FA511DEBD7A9001ED6C5 = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = XQAXV8H896;
+						ProvisioningStyle = Automatic;
+						TestTargetID = A6F8FA2D1DEBD7A8001ED6C5;
+					};
+				};
+			};
+			buildConfigurationList = A6F8FA291DEBD7A8001ED6C5 /* Build configuration list for PBXProject "GDHNetworkingDemo" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A6F8FA251DEBD7A8001ED6C5;
+			productRefGroup = A6F8FA2F1DEBD7A8001ED6C5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A6F8FA2D1DEBD7A8001ED6C5 /* GDHNetworkingDemo */,
+				A6F8FA461DEBD7A8001ED6C5 /* GDHNetworkingDemoTests */,
+				A6F8FA511DEBD7A9001ED6C5 /* GDHNetworkingDemoUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A6F8FA2C1DEBD7A8001ED6C5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A603ACD51DEBDD8C005C5E4B /* success@2x.png in Resources */,
+				A6F8FA411DEBD7A8001ED6C5 /* LaunchScreen.storyboard in Resources */,
+				A603ACD41DEBDD8C005C5E4B /* success.png in Resources */,
+				A603ACD31DEBDD8C005C5E4B /* error@2x.png in Resources */,
+				A6F8FA3E1DEBD7A8001ED6C5 /* Assets.xcassets in Resources */,
+				A603ACD21DEBDD8C005C5E4B /* error.png in Resources */,
+				A6F8FA3C1DEBD7A8001ED6C5 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6F8FA451DEBD7A8001ED6C5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6F8FA501DEBD7A9001ED6C5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A8ECE045BEF917A409979DC7 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-GDHNetworkingDemo/Pods-GDHNetworkingDemo-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C2F405F83E79DC8461B9E78C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-GDHNetworkingDemo/Pods-GDHNetworkingDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F36DD565D225D0C3CC6046DE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A6F8FA2A1DEBD7A8001ED6C5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6F8FA391DEBD7A8001ED6C5 /* ViewController.m in Sources */,
+				A603ACD81DEBDED7005C5E4B /* GDHNetworkAPI.m in Sources */,
+				A6F8FA361DEBD7A8001ED6C5 /* AppDelegate.m in Sources */,
+				A6F8FA331DEBD7A8001ED6C5 /* main.m in Sources */,
+				A6F8FA671DEBD88D001ED6C5 /* GDHNetworkingManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6F8FA431DEBD7A8001ED6C5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6F8FA4C1DEBD7A9001ED6C5 /* GDHNetworkingDemoTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A6F8FA4E1DEBD7A9001ED6C5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6F8FA571DEBD7A9001ED6C5 /* GDHNetworkingDemoUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A6F8FA491DEBD7A8001ED6C5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A6F8FA2D1DEBD7A8001ED6C5 /* GDHNetworkingDemo */;
+			targetProxy = A6F8FA481DEBD7A8001ED6C5 /* PBXContainerItemProxy */;
+		};
+		A6F8FA541DEBD7A9001ED6C5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A6F8FA2D1DEBD7A8001ED6C5 /* GDHNetworkingDemo */;
+			targetProxy = A6F8FA531DEBD7A9001ED6C5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		A6F8FA3A1DEBD7A8001ED6C5 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A6F8FA3B1DEBD7A8001ED6C5 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		A6F8FA3F1DEBD7A8001ED6C5 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A6F8FA401DEBD7A8001ED6C5 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		A6F8FA591DEBD7A9001ED6C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		A6F8FA5A1DEBD7A9001ED6C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A6F8FA5C1DEBD7A9001ED6C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C53EAEECE527A945B11B2AE4 /* Pods-GDHNetworkingDemo.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 3858N9SG7V;
+				INFOPLIST_FILE = GDHNetworkingDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gf.Network.GDHNetworkingDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A6F8FA5D1DEBD7A9001ED6C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9E480336901FAB1E2D93F31D /* Pods-GDHNetworkingDemo.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 3858N9SG7V;
+				INFOPLIST_FILE = GDHNetworkingDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gf.Network.GDHNetworkingDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		A6F8FA5F1DEBD7A9001ED6C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = XQAXV8H896;
+				INFOPLIST_FILE = GDHNetworkingDemoTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gf.Network.GDHNetworkingDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GDHNetworkingDemo.app/GDHNetworkingDemo";
+			};
+			name = Debug;
+		};
+		A6F8FA601DEBD7A9001ED6C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = XQAXV8H896;
+				INFOPLIST_FILE = GDHNetworkingDemoTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gf.Network.GDHNetworkingDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GDHNetworkingDemo.app/GDHNetworkingDemo";
+			};
+			name = Release;
+		};
+		A6F8FA621DEBD7A9001ED6C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = XQAXV8H896;
+				INFOPLIST_FILE = GDHNetworkingDemoUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gf.Network.GDHNetworkingDemoUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = GDHNetworkingDemo;
+			};
+			name = Debug;
+		};
+		A6F8FA631DEBD7A9001ED6C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = XQAXV8H896;
+				INFOPLIST_FILE = GDHNetworkingDemoUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = gf.Network.GDHNetworkingDemoUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = GDHNetworkingDemo;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A6F8FA291DEBD7A8001ED6C5 /* Build configuration list for PBXProject "GDHNetworkingDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A6F8FA591DEBD7A9001ED6C5 /* Debug */,
+				A6F8FA5A1DEBD7A9001ED6C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A6F8FA5B1DEBD7A9001ED6C5 /* Build configuration list for PBXNativeTarget "GDHNetworkingDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A6F8FA5C1DEBD7A9001ED6C5 /* Debug */,
+				A6F8FA5D1DEBD7A9001ED6C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A6F8FA5E1DEBD7A9001ED6C5 /* Build configuration list for PBXNativeTarget "GDHNetworkingDemoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A6F8FA5F1DEBD7A9001ED6C5 /* Debug */,
+				A6F8FA601DEBD7A9001ED6C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A6F8FA611DEBD7A9001ED6C5 /* Build configuration list for PBXNativeTarget "GDHNetworkingDemoUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A6F8FA621DEBD7A9001ED6C5 /* Debug */,
+				A6F8FA631DEBD7A9001ED6C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A6F8FA261DEBD7A8001ED6C5 /* Project object */;
+}

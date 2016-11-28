@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bvn-Fe-jFL">
+                                <rect key="frame" x="16" y="84" width="343" height="36"/>
+                                <color key="backgroundColor" red="0.20000000000000001" green="0.59999999999999998" blue="0.99607843139999996" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="36" id="cD4-il-31i"/>
+                                </constraints>
+                                <state key="normal" title="block回调数据">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="blockBtnAct:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Iao-Xq-jUI"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hri-4s-0B3">
+                                <rect key="frame" x="16" y="144" width="343" height="36"/>
+                                <color key="backgroundColor" red="0.20000000000000001" green="0.59999999999999998" blue="0.99607843139999996" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="36" id="luw-Nj-wJ2"/>
+                                </constraints>
+                                <state key="normal" title="Delegate回调数据">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="delegateBtnAct:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3bz-Ih-j5H"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CC5-V0-0Km">
+                                <rect key="frame" x="16" y="204" width="343" height="36"/>
+                                <color key="backgroundColor" red="0.20000000000000001" green="0.59999999999999998" blue="0.99607843139999996" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="36" id="npH-W7-her"/>
+                                </constraints>
+                                <state key="normal" title="SEL回调数据">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="selBtnAct:" destination="BYZ-38-t0r" eventType="touchUpInside" id="XuT-o1-6Q3"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vf7-Sa-NYG">
+                                <rect key="frame" x="16" y="264" width="343" height="36"/>
+                                <color key="backgroundColor" red="0.20000000000000001" green="0.59999999999999998" blue="0.99607843139999996" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="36" id="0g0-AW-rPa"/>
+                                </constraints>
+                                <state key="normal" title="上传头像">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="upLoadImageBtnAct:" destination="BYZ-38-t0r" eventType="touchUpInside" id="12W-Ly-vld"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TgQ-10-gcJ">
+                                <rect key="frame" x="16" y="324" width="343" height="36"/>
+                                <color key="backgroundColor" red="0.20000000000000001" green="0.59999999999999998" blue="0.99607843139999996" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="36" id="1wQ-pc-MPG"/>
+                                </constraints>
+                                <state key="normal" title="上传文件">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="upLoadFileBtnAct:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5Px-n5-PqM"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oJ2-E7-hIl">
+                                <rect key="frame" x="16" y="384" width="343" height="36"/>
+                                <color key="backgroundColor" red="0.20000000000000001" green="0.59999999999999998" blue="0.99607843139999996" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="36" id="ZyH-aR-Iwm"/>
+                                </constraints>
+                                <state key="normal" title="下载文件">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="downLoadFileBtnAct:" destination="BYZ-38-t0r" eventType="touchUpInside" id="QhV-EA-Hd3"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="TgQ-10-gcJ" firstAttribute="centerX" secondItem="vf7-Sa-NYG" secondAttribute="centerX" id="10f-kE-HAc"/>
+                            <constraint firstItem="oJ2-E7-hIl" firstAttribute="top" secondItem="TgQ-10-gcJ" secondAttribute="bottom" constant="24" id="4Vi-5V-wqQ"/>
+                            <constraint firstItem="vf7-Sa-NYG" firstAttribute="top" secondItem="CC5-V0-0Km" secondAttribute="bottom" constant="24" id="7mE-2P-boN"/>
+                            <constraint firstItem="TgQ-10-gcJ" firstAttribute="leading" secondItem="vf7-Sa-NYG" secondAttribute="leading" id="EiN-aq-aVk"/>
+                            <constraint firstItem="Hri-4s-0B3" firstAttribute="leading" secondItem="bvn-Fe-jFL" secondAttribute="leading" id="ISt-mq-Nmo"/>
+                            <constraint firstItem="CC5-V0-0Km" firstAttribute="trailing" secondItem="bvn-Fe-jFL" secondAttribute="trailing" id="IsA-9w-8wG"/>
+                            <constraint firstItem="TgQ-10-gcJ" firstAttribute="trailing" secondItem="vf7-Sa-NYG" secondAttribute="trailing" id="KiG-yv-d1E"/>
+                            <constraint firstItem="CC5-V0-0Km" firstAttribute="centerX" secondItem="bvn-Fe-jFL" secondAttribute="centerX" id="Mp2-Rz-Zfv"/>
+                            <constraint firstItem="CC5-V0-0Km" firstAttribute="leading" secondItem="bvn-Fe-jFL" secondAttribute="leading" id="OqP-Wx-Z4d"/>
+                            <constraint firstItem="vf7-Sa-NYG" firstAttribute="centerX" secondItem="bvn-Fe-jFL" secondAttribute="centerX" id="Sw2-WT-nQ9"/>
+                            <constraint firstItem="vf7-Sa-NYG" firstAttribute="trailing" secondItem="bvn-Fe-jFL" secondAttribute="trailing" id="VfD-ed-AQS"/>
+                            <constraint firstItem="vf7-Sa-NYG" firstAttribute="leading" secondItem="bvn-Fe-jFL" secondAttribute="leading" id="Wrf-x2-Jsv"/>
+                            <constraint firstAttribute="trailing" secondItem="bvn-Fe-jFL" secondAttribute="trailing" constant="16" id="Yr0-RP-3Ty"/>
+                            <constraint firstItem="Hri-4s-0B3" firstAttribute="centerX" secondItem="bvn-Fe-jFL" secondAttribute="centerX" id="aly-0S-cbe"/>
+                            <constraint firstItem="Hri-4s-0B3" firstAttribute="trailing" secondItem="bvn-Fe-jFL" secondAttribute="trailing" id="gAY-fI-ce4"/>
+                            <constraint firstItem="bvn-Fe-jFL" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="64" id="hot-c5-dtw"/>
+                            <constraint firstItem="oJ2-E7-hIl" firstAttribute="leading" secondItem="vf7-Sa-NYG" secondAttribute="leading" id="iC5-hq-g9c"/>
+                            <constraint firstItem="CC5-V0-0Km" firstAttribute="top" secondItem="Hri-4s-0B3" secondAttribute="bottom" constant="24" id="jeq-vF-FdK"/>
+                            <constraint firstItem="Hri-4s-0B3" firstAttribute="top" secondItem="bvn-Fe-jFL" secondAttribute="bottom" constant="24" id="kNa-Jl-JbR"/>
+                            <constraint firstItem="TgQ-10-gcJ" firstAttribute="top" secondItem="vf7-Sa-NYG" secondAttribute="bottom" constant="24" id="ljS-Zl-si0"/>
+                            <constraint firstItem="bvn-Fe-jFL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="16" id="sco-Am-KUi"/>
+                            <constraint firstItem="oJ2-E7-hIl" firstAttribute="centerX" secondItem="vf7-Sa-NYG" secondAttribute="centerX" id="u5J-pK-la4"/>
+                            <constraint firstItem="oJ2-E7-hIl" firstAttribute="trailing" secondItem="vf7-Sa-NYG" secondAttribute="trailing" id="zKl-Ny-ZjL"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+</document>
