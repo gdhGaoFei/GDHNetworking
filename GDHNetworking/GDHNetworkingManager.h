@@ -8,10 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "MBProgressHUD.h"
-#import <CommonCrypto/CommonDigest.h>
-#import "AFNetworking.h"
-#import "AFNetworkActivityIndicatorManager.h"
 
 @class GDHNetworkingObject;//网络请求的基类
 @protocol GDHNetworkingObject

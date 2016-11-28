@@ -7,6 +7,10 @@
 //
 
 #import "GDHNetworkingManager.h"
+#import "MBProgressHUD.h"
+#import <CommonCrypto/CommonDigest.h>
+#import "AFNetworking.h"
+#import "AFNetworkActivityIndicatorManager.h"
 
 // ========= 加密措施 ==========
 @interface NSString (md5)
