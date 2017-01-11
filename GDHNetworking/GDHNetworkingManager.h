@@ -14,8 +14,8 @@
 @end
 
 
-#pragma mark ========== Block / Delegate / 枚举 ============
-#pragma mark ==== 宏定义 =======
+#pragma mark - ========== Block / Delegate / 枚举 ============
+#pragma mark - ==== 宏定义 =======
 // 项目打包上线都不会打印日志，因此可放心。
 #ifdef DEBUG
 #define DTLog(s, ... ) NSLog( @"[%@ in line %d] ===============>%@", [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
@@ -27,7 +27,7 @@
 [alert show];
 
 
-#pragma mark ========= // 枚举 及block \\ ===========
+#pragma mark - ========= // 枚举 及block \\ ===========
 //============== 枚举 ===============
 /**
  *  请求类型
@@ -103,7 +103,7 @@ typedef void(^GDHResponseFail)(NSError * error);
 
 
 
-#pragma mark ========  代理  ================
+#pragma mark - ========  代理  ================
 @protocol GDHNetworkDelegate <NSObject>//请求封装的代理协议
 
 @optional
@@ -130,7 +130,7 @@ typedef void(^GDHResponseFail)(NSError * error);
 @end
 
 
-#pragma marlk  ============  网络请求请求管理着 =============
+#pragma marlk - ============  网络请求请求管理着 =============
 
 //网络请求请求管理着
 @interface GDHNetworkingManager : NSObject
@@ -143,8 +143,8 @@ typedef void(^GDHResponseFail)(NSError * error);
  *   @param successBlock  成功的回调
  *   @param failureBlock  失败的回调
  *   @param progress      进度回调
- *  @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD      是否加载进度指示器
+ *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)getRequstWithURL:(NSString *)url
                   params:(NSDictionary *)paramsDict
@@ -152,7 +152,7 @@ typedef void(^GDHResponseFail)(NSError * error);
             failureBlock:(GDHResponseFail)failureBlock
                 progress:(GDHGetProgress)progress
             refreshCache:(BOOL)refreshCache
-                 showHUD:(BOOL)showHUD;
+                showView:(UIView *)showView;
 
 /**
  *   GET请求通过代理回调
@@ -162,14 +162,14 @@ typedef void(^GDHResponseFail)(NSError * error);
  *   @param delegate    delegate
  *   @param progress      进度回调
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD    是否转圈圈
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)getRequstWithURL:(NSString*)url
                   params:(NSDictionary*)paramsDict
                 delegate:(id<GDHNetworkDelegate>)delegate
                 progress:(GDHGetProgress)progress
             refreshCache:(BOOL)refreshCache
-                 showHUD:(BOOL)showHUD;
+                showView:(UIView *)showView;
 /**
  *   get 请求通过 taget 回调方法
  *
@@ -179,7 +179,7 @@ typedef void(^GDHResponseFail)(NSError * error);
  *   @param action      action
  *   @param progress      进度回调
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD     是否加载进度指示器
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)getRequstWithURL:(NSString*)url
                   params:(NSDictionary*)paramsDict
@@ -187,7 +187,7 @@ typedef void(^GDHResponseFail)(NSError * error);
                   action:(SEL)action
                 progress:(GDHGetProgress)progress
             refreshCache:(BOOL)refreshCache
-                 showHUD:(BOOL)showHUD;
+                showView:(UIView *)showView;
 
 #pragma mark - 发送 POST 请求的方法
 /**
@@ -199,7 +199,7 @@ typedef void(^GDHResponseFail)(NSError * error);
  *   @param failureBlock  失败的回调
  *   @param progress      进度回调
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD       是否加载进度指示器
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)postReqeustWithURL:(NSString*)url
                     params:(NSDictionary*)paramsDict
@@ -207,7 +207,7 @@ typedef void(^GDHResponseFail)(NSError * error);
               failureBlock:(GDHResponseFail)failureBlock
                   progress:(GDHGetProgress)progress
               refreshCache:(BOOL)refreshCache
-                   showHUD:(BOOL)showHUD;
+                  showView:(UIView *)showView;
 /**
  *   post请求通过代理回调
  *
@@ -216,14 +216,14 @@ typedef void(^GDHResponseFail)(NSError * error);
  *   @param delegate    delegate
  *   @param progress      进度回调
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD    是否转圈圈
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)postReqeustWithURL:(NSString*)url
                     params:(NSDictionary*)paramsDict
                   delegate:(id<GDHNetworkDelegate>)delegate
                   progress:(GDHGetProgress)progress
               refreshCache:(BOOL)refreshCache
-                   showHUD:(BOOL)showHUD;
+                  showView:(UIView *)showView;
 /**
  *   post 请求通过 target 回调结果
  *
@@ -232,7 +232,7 @@ typedef void(^GDHResponseFail)(NSError * error);
  *   @param target      target
  *   @param progress      进度回调
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD     是否显示圈圈
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)postReqeustWithURL:(NSString*)url
                     params:(NSDictionary*)paramsDict
@@ -240,14 +240,14 @@ typedef void(^GDHResponseFail)(NSError * error);
                     action:(SEL)action
                   progress:(GDHGetProgress)progress
               refreshCache:(BOOL)refreshCache
-                   showHUD:(BOOL)showHUD;
+                  showView:(UIView *)showView;
 
 @end
 
 
 
 
-#pragma mark ============ 网络请求的基类 =================
+#pragma mark - ============ 网络请求的基类 =================
 
 //网络请求的基类
 @interface GDHNetworkingObject : NSObject
@@ -275,7 +275,7 @@ typedef void(^GDHResponseFail)(NSError * error);
 @property (nonatomic, assign) SEL select;
 
 
-#pragma mark - 创建一个网络请求项
+#pragma mark - ========== 创建一个网络请求项 ==========
 /**
  *  创建一个网络请求项，开始请求网络
  *
@@ -285,7 +285,7 @@ typedef void(^GDHResponseFail)(NSError * error);
  *  @param refreshCache 是否获取缓存。无网络或者获取数据失败则获取本地缓存数据
  *  @param delegate     网络请求的委托，如果没有取消网络请求的需求，可传nil
  *  @param hashValue    网络请求的委托delegate的唯一标示
- *  @param showHUD      是否显示HUD
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  *  @param progress     请求成功后的progress进度
  *  @param successBlock 请求成功后的block
  *  @param failureBlock 请求失败后的block
@@ -300,7 +300,7 @@ typedef void(^GDHResponseFail)(NSError * error);
                              target:(id)target
                              action:(SEL)action
                           hashValue:(NSUInteger)hashValue
-                            showHUD:(BOOL)showHUD
+                           showView:(UIView *)showView
                            progress:(GDHDownloadProgress)progress
                        successBlock:(GDHResponseSuccess)successBlock
                        failureBlock:(GDHResponseFail)failureBlock;
@@ -316,7 +316,7 @@ typedef void(^GDHResponseFail)(NSError * error);
  *	@param mimeType		默认为image/jpeg
  *	@param parameters	参数
  *	@param progress		上传进度
- *	@param showHUD		菊花旋转
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  *	@param success		上传成功回调
  *	@param fail		    上传失败回调
  *
@@ -327,7 +327,7 @@ typedef void(^GDHResponseFail)(NSError * error);
                                   name:(NSString *)name
                               mimeType:(NSString *)mimeType
                             parameters:(NSDictionary *)parameters
-                               showHUD:(BOOL)showHUD
+                              showView:(UIView *)showView
                               progress:(GDHUploadProgress)progress
                                success:(GDHResponseSuccess)success
                                   fail:(GDHResponseFail)fail;
@@ -338,7 +338,7 @@ typedef void(^GDHResponseFail)(NSError * error);
  *
  *	@param url						上传路径
  *	@param uploadingFile	待上传文件的路径
- *	@param showHUD		    菊花旋转
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  *	@param progress			上传进度
  *	@param success				上传成功回调
  *	@param fail					上传失败回调
@@ -346,7 +346,7 @@ typedef void(^GDHResponseFail)(NSError * error);
  */
 + (GDHURLSessionTask *)uploadFileWithUrl:(NSString *)url
                            uploadingFile:(NSString *)uploadingFile
-                                 showHUD:(BOOL)showHUD
+                                showView:(UIView *)showView
                                 progress:(GDHUploadProgress)progress
                                  success:(GDHResponseSuccess)success
                                     fail:(GDHResponseFail)fail;
@@ -358,14 +358,14 @@ typedef void(^GDHResponseFail)(NSError * error);
  *
  *  @param url           下载URL
  *  @param saveToPath    下载到哪个路径下
- *	@param showHUD		 菊花旋转
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  *  @param progressBlock 下载进度
  *  @param success       下载成功后的回调
  *  @param failure       下载失败后的回调
  */
 + (GDHURLSessionTask *)downloadWithUrl:(NSString *)url
                             saveToPath:(NSString *)saveToPath
-                               showHUD:(BOOL)showHUD
+                              showView:(UIView *)showView
                               progress:(GDHDownloadProgress)progressBlock
                                success:(GDHResponseSuccess)success
                                failure:(GDHResponseFail)failure;

@@ -17,7 +17,7 @@
 +(void)getBusQueryWithCity:(NSString *)city
                    success:(GDHResponseSuccess)success
                      faile:(GDHResponseFail)faile
-                   showHUD:(BOOL)showHUD
+                  showView:(UIView *)showView
               refreshCache:(BOOL)refreshCache;
 
 @end

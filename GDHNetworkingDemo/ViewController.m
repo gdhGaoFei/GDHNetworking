@@ -26,7 +26,7 @@
                                    [GDHNetworkAPI loadCreateWithDic:returnData withName:@"block回调数据" withFileName:@"block"];
                                } faile:^(NSError *error) {
                                    NSLog(@"=======error =======%@======",error);
-                               } showHUD:YES refreshCache:NO];
+                               } showView:self.view refreshCache:NO];
 }
 /**Delegate回调数据*/
 - (IBAction)delegateBtnAct:(id)sender {
@@ -35,7 +35,7 @@
     [GDHNetworkingManager getRequstWithURL:@"onebox/bus/query"
                                     params:parm
                                   delegate:self
-                                  progress:nil refreshCache:NO showHUD:YES];
+                                  progress:nil refreshCache:NO showView:self.view];
 }
 /**SEL回调数据*/
 - (IBAction)selBtnAct:(id)sender {
@@ -47,7 +47,7 @@
                                     action:@selector(finishedRequest:didFaild:)
                                   progress:^(int64_t bytesRead, int64_t totalBytesRead, int64_t totalBytesExpectedToRead) {
                                       NSLog(@"========%lld====",totalBytesExpectedToRead);
-                                  } refreshCache:NO showHUD:YES];
+                                  } refreshCache:NO showView:self.view];
 }
 /**上传图片*/
 - (IBAction)upLoadImageBtnAct:(id)sender {
@@ -84,7 +84,7 @@
     NSLog(@"文件路径======%@=========", path);
     [GDHNetworkingObject downloadWithUrl:@"https://codeload.github.com/gdhGaoFei/GDHNetwork/zip/master"
                               saveToPath:path
-                                 showHUD:YES
+                                showView:self.view
                                 progress:^(int64_t bytesRead, int64_t totalBytesRead, int64_t totalBytesExpectedToRead) {
                                     NSLog(@"=========%lld=====%lld=====",totalBytesRead,totalBytesExpectedToRead);
                                 }

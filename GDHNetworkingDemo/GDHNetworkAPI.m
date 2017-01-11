@@ -29,7 +29,7 @@
 +(void)getBusQueryWithCity:(NSString *)city
                    success:(GDHResponseSuccess)success
                      faile:(GDHResponseFail)faile
-                   showHUD:(BOOL)showHUD
+                  showView:(UIView *)showView
               refreshCache:(BOOL)refreshCache{
     NSDictionary * parm = @{@"station":city,
                             @"key":@"e97e5292887f3aa1f99ab7b451ad2ad9",};
@@ -47,7 +47,7 @@
                                }
                                    progress:nil
                                refreshCache:refreshCache
-                                    showHUD:showHUD];
+                                  showView:showView];
 }
 
 @end

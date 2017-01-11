@@ -54,8 +54,8 @@
  *   @param successBlock successBlock
  *   @param failureBlock failureBlock
  *   @param progress      进度回调
- *  @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD      showHUD
+ *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)getRequstWithURL:(NSString*)url
                   params:(NSDictionary*)params
@@ -66,10 +66,10 @@
             failureBlock:(GDHResponseFail)failureBlock
                 progress:(GDHGetProgress)progress
             refreshCache:(BOOL)refreshCache
-                 showHUD:(BOOL)showHUD
+                showView:(UIView *)showView
 {
     NSMutableDictionary *mutableDict = [NSMutableDictionary dictionaryWithDictionary:params];
-    [GDHNetworkingObject initWithtype:GDHNetWorkTypeGET url:url params:mutableDict refreshCache:refreshCache delegate:delegate target:target action:action hashValue:0 showHUD:showHUD progress:progress successBlock:successBlock failureBlock:failureBlock];
+    [GDHNetworkingObject initWithtype:GDHNetWorkTypeGET url:url params:mutableDict refreshCache:refreshCache delegate:delegate target:target action:action hashValue:0 showView:showView progress:progress successBlock:successBlock failureBlock:failureBlock];
 }
 
 
@@ -81,8 +81,8 @@
  *   @param successBlock  成功的回调
  *   @param failureBlock  失败的回调
  *   @param progress      进度回调
- *  @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD      是否加载进度指示器
+ *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)getRequstWithURL:(NSString *)url
                   params:(NSDictionary *)paramsDict
@@ -90,8 +90,8 @@
             failureBlock:(GDHResponseFail)failureBlock
                 progress:(GDHGetProgress)progress
             refreshCache:(BOOL)refreshCache
-                 showHUD:(BOOL)showHUD{
-    [self getRequstWithURL:url params:paramsDict target:nil action:nil delegate:nil successBlock:successBlock failureBlock:failureBlock progress:progress refreshCache:refreshCache showHUD:showHUD];
+                showView:(UIView *)showView{
+    [self getRequstWithURL:url params:paramsDict target:nil action:nil delegate:nil successBlock:successBlock failureBlock:failureBlock progress:progress refreshCache:refreshCache showView:showView];
 }
 
 /**
@@ -102,15 +102,15 @@
  *   @param delegate    delegate
  *   @param progress      进度回调
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD    是否转圈圈
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)getRequstWithURL:(NSString*)url
                   params:(NSDictionary*)paramsDict
                 delegate:(id<GDHNetworkDelegate>)delegate
                 progress:(GDHGetProgress)progress
             refreshCache:(BOOL)refreshCache
-                 showHUD:(BOOL)showHUD{
-    [self getRequstWithURL:url params:paramsDict target:nil action:nil delegate:delegate successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showHUD:showHUD];
+                showView:(UIView *)showView{
+    [self getRequstWithURL:url params:paramsDict target:nil action:nil delegate:delegate successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showView:showView];
 }
 /**
  *   get 请求通过 taget 回调方法
@@ -121,7 +121,7 @@
  *   @param action      action
  *   @param progress      进度回调
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD     是否加载进度指示器
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)getRequstWithURL:(NSString*)url
                   params:(NSDictionary*)paramsDict
@@ -129,8 +129,8 @@
                   action:(SEL)action
                 progress:(GDHGetProgress)progress
             refreshCache:(BOOL)refreshCache
-                 showHUD:(BOOL)showHUD{
-    [self getRequstWithURL:url params:paramsDict target:target action:action delegate:nil successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showHUD:showHUD];
+                showView:(UIView *)showView{
+    [self getRequstWithURL:url params:paramsDict target:target action:action delegate:nil successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showView:showView];
 }
 
 #pragma mark - 发送 POST 请求的方法
@@ -147,7 +147,7 @@
  *   @param failureBlock failureBlock
  *   @param progress      进度回调
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD      showHUD
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)postReqeustWithURL:(NSString*)url
                     params:(NSDictionary*)params
@@ -158,10 +158,9 @@
               failureBlock:(GDHResponseFail)failureBlock
                   progress:(GDHGetProgress)progress
               refreshCache:(BOOL)refreshCache
-                   showHUD:(BOOL)showHUD
-{
+                  showView:(UIView *)showView{
     NSMutableDictionary *mutableDict = [NSMutableDictionary dictionaryWithDictionary:params];
-    [GDHNetworkingObject initWithtype:GDHNetWorkTypePOST url:url params:mutableDict refreshCache:refreshCache delegate:delegate target:target action:action hashValue:1 showHUD:showHUD progress:progress successBlock:successBlock failureBlock:failureBlock];
+    [GDHNetworkingObject initWithtype:GDHNetWorkTypePOST url:url params:mutableDict refreshCache:refreshCache delegate:delegate target:target action:action hashValue:1 showView:showView progress:progress successBlock:successBlock failureBlock:failureBlock];
 }
 
 /**
@@ -173,7 +172,7 @@
  *   @param failureBlock  失败的回调
  *   @param progress      进度回调
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD       是否加载进度指示器
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)postReqeustWithURL:(NSString*)url
                     params:(NSDictionary*)paramsDict
@@ -181,8 +180,8 @@
               failureBlock:(GDHResponseFail)failureBlock
                   progress:(GDHGetProgress)progress
               refreshCache:(BOOL)refreshCache
-                   showHUD:(BOOL)showHUD{
-    [self postReqeustWithURL:url params:paramsDict target:nil action:nil delegate:nil successBlock:successBlock failureBlock:failureBlock progress:progress refreshCache:refreshCache showHUD:showHUD];
+                  showView:(UIView *)showView{
+    [self postReqeustWithURL:url params:paramsDict target:nil action:nil delegate:nil successBlock:successBlock failureBlock:failureBlock progress:progress refreshCache:refreshCache showView:showView];
 }
 /**
  *   post请求通过代理回调
@@ -192,15 +191,15 @@
  *   @param delegate    delegate
  *   @param progress      进度回调
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD    是否转圈圈
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)postReqeustWithURL:(NSString*)url
                     params:(NSDictionary*)paramsDict
                   delegate:(id<GDHNetworkDelegate>)delegate
                   progress:(GDHGetProgress)progress
               refreshCache:(BOOL)refreshCache
-                   showHUD:(BOOL)showHUD{
-    [self postReqeustWithURL:url params:paramsDict target:nil action:nil delegate:delegate successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showHUD:showHUD];
+                  showView:(UIView *)showView{
+    [self postReqeustWithURL:url params:paramsDict target:nil action:nil delegate:delegate successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showView:showView];
 }
 /**
  *   post 请求通过 target 回调结果
@@ -210,7 +209,7 @@
  *   @param target      target
  *   @param progress      进度回调
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
- *   @param showHUD     是否显示圈圈
+ *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
 + (void)postReqeustWithURL:(NSString*)url
                     params:(NSDictionary*)paramsDict
@@ -218,8 +217,8 @@
                     action:(SEL)action
                   progress:(GDHGetProgress)progress
               refreshCache:(BOOL)refreshCache
-                   showHUD:(BOOL)showHUD{
-    [self postReqeustWithURL:url params:paramsDict target:target action:action delegate:nil successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showHUD:showHUD];
+                  showView:(UIView *)showView{
+    [self postReqeustWithURL:url params:paramsDict target:target action:action delegate:nil successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showView:showView];
 }
 
 @end
@@ -596,7 +595,7 @@ static inline NSString *cachePath() {
  *  @param params       网络请求参数
  *  @param refreshCache 是否获取缓存。无网络或者获取数据失败则获取本地缓存数据
  *  @param delegate     网络请求的委托，如果没有取消网络请求的需求，可传nil
- *  @param showHUD      是否显示HUD
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  *  @param successBlock 请求成功后的block
  *  @param failureBlock 请求失败后的block
  *
@@ -610,7 +609,7 @@ static inline NSString *cachePath() {
                              target:(id)target
                              action:(SEL)action
                           hashValue:(NSUInteger)hashValue
-                            showHUD:(BOOL)showHUD
+                           showView:(UIView *)showView
                            progress:(GDHDownloadProgress)progress
                        successBlock:(GDHResponseSuccess)successBlock
                        failureBlock:(GDHResponseFail)failureBlock{
@@ -621,9 +620,8 @@ static inline NSString *cachePath() {
     object.tagrget  = target;
     object.select   = action;
     
-    if (showHUD) {
-        [[GDHNetworkingObject sharedInstance].hud showAnimated:YES];
-        //[MBProgressHUD showMessageWindows:@"正在加载中..."];
+    if (showView != nil) {
+        [MBProgressHUD showHUDAddedTo:showView animated:YES];
     }
     
     if ([self shouldEncode]) {
@@ -637,8 +635,8 @@ static inline NSString *cachePath() {
         if ([NSURL URLWithString:url] == nil) {
             DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
             SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showHUD) {
-                [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             failureBlock(nil);
             return nil;
@@ -649,8 +647,8 @@ static inline NSString *cachePath() {
         if (absoluteURL == nil) {
             DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
             SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showHUD) {
-                [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             failureBlock(nil);
             return nil;
@@ -684,22 +682,22 @@ static inline NSString *cachePath() {
                                               params:params];
                     }
                     
-                    if (showHUD) {
-                        [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                    if (showView != nil) {
+                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
-                    failureBlock(nil);
+//                    failureBlock(nil);
                     return nil;
                 }else{
-                    if (showHUD) {
-                        [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                    if (showView != nil) {
+                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
                     SHOW_ALERT(@"网络连接断开,请检查网络!");
                     failureBlock(nil);
                     return nil;
                 }
             }else{
-                if (showHUD) {
-                    [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                if (showView != nil) {
+                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                 }
                 SHOW_ALERT(@"网络连接断开,请检查网络!");
                 failureBlock(nil);
@@ -735,9 +733,10 @@ static inline NSString *cachePath() {
                                              url:absolute
                                           params:params];
                 }
-                if (showHUD) {
-                    [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                if (showView != nil) {
+                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                 }
+                
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [[self allTasks] removeObject:task];
                 
@@ -762,9 +761,11 @@ static inline NSString *cachePath() {
                                                      url:absolute
                                                   params:params];
                         }
-                        if (showHUD) {
-                            [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                        if (showView != nil) {
+                            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                         }
+                        
+                        
                     } else {
                         
                         //block
@@ -781,8 +782,8 @@ static inline NSString *cachePath() {
                         if ([self isDebug]) {
                             [self logWithFailError:error url:absolute params:params];
                         }
-                        if (showHUD) {
-                            [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                        if (showView != nil) {
+                            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                         }
                         failureBlock(nil);
                     }
@@ -801,8 +802,8 @@ static inline NSString *cachePath() {
                         [self logWithFailError:error url:absolute params:params];
                     }
                     
-                    if (showHUD) {
-                        [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                    if (showView != nil) {
+                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
                 }
             }];
@@ -833,22 +834,22 @@ static inline NSString *cachePath() {
                                               params:params];
                     }
                     
-                    if (showHUD) {
-                        [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                    if (showView != nil) {
+                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
-                    failureBlock(nil);
+//                    failureBlock(nil);
                     return nil;
                 }else{
-                    if (showHUD) {
-                        [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                    if (showView != nil) {
+                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
                     SHOW_ALERT(@"网络连接断开,请检查网络!");
                     failureBlock(nil);
                     return nil;
                 }
             }else{//=========>不获取
-                if (showHUD) {
-                    [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                if (showView != nil) {
+                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                 }
                 SHOW_ALERT(@"网络连接断开,请检查网络!");
                 failureBlock(nil);
@@ -891,8 +892,8 @@ static inline NSString *cachePath() {
                                           params:params];
                 }
                 
-                if (showHUD) {
-                    [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                if (showView != nil) {
+                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                 }
                 
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -922,8 +923,8 @@ static inline NSString *cachePath() {
                                                   params:params];
                         }
                         
-                        if (showHUD) {
-                            [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                        if (showView != nil) {
+                            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                         }
                         
                     } else {
@@ -939,8 +940,8 @@ static inline NSString *cachePath() {
                         }
                     }
                     
-                    if (showHUD) {
-                        [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                    if (showView != nil) {
+                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
                     
                 } else {
@@ -957,8 +958,8 @@ static inline NSString *cachePath() {
                         [self logWithFailError:error url:absolute params:params];
                     }
                     
-                    if (showHUD) {
-                        [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+                    if (showView != nil) {
+                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
                 }
             }];
@@ -1290,7 +1291,7 @@ static inline NSString *cachePath() {
  *	@param mimeType		默认为image/jpeg
  *	@param parameters	参数
  *	@param progress		上传进度
- *	@param showHUD		菊花旋转
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  *	@param success		上传成功回调
  *	@param fail		    上传失败回调
  *
@@ -1301,7 +1302,7 @@ static inline NSString *cachePath() {
                                   name:(NSString *)name
                               mimeType:(NSString *)mimeType
                             parameters:(NSDictionary *)parameters
-                               showHUD:(BOOL)showHUD
+                              showView:(UIView *)showView
                               progress:(GDHUploadProgress)progress
                                success:(GDHResponseSuccess)success
                                   fail:(GDHResponseFail)fail{
@@ -1311,15 +1312,17 @@ static inline NSString *cachePath() {
         return nil;
     }
     
-    if (showHUD) {
-        [[GDHNetworkingObject sharedInstance].hud showAnimated:YES];
+    if (showView) {
+        [GDHNetworkingObject sharedInstance].hud = [MBProgressHUD showHUDAddedTo:showView animated:YES];
+        [GDHNetworkingObject sharedInstance].hud.mode = MBProgressHUDModeDeterminate;
+        //[MBProgressHUD showHUDAddedTo:showView animated:YES];
     }
     
     if ([self baseUrl] == nil) {
         if ([NSURL URLWithString:url] == nil) {
             DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showHUD) {
-                [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             fail(nil);
             return nil;
@@ -1327,8 +1330,8 @@ static inline NSString *cachePath() {
     } else {
         if ([NSURL URLWithString:[NSString stringWithFormat:@"%@%@", [self baseUrl], url]] == nil) {
             DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showHUD) {
-                [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             fail(nil);
             return nil;
@@ -1359,6 +1362,7 @@ static inline NSString *cachePath() {
         if (progress) {
             progress(uploadProgress.completedUnitCount, uploadProgress.totalUnitCount);
         }
+        [GDHNetworkingObject sharedInstance].hud.progress = (CGFloat)(uploadProgress.completedUnitCount) / (CGFloat)uploadProgress.totalUnitCount;
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         [[self allTasks] removeObject:task];
         [self successResponse:responseObject callback:success];
@@ -1369,8 +1373,8 @@ static inline NSString *cachePath() {
                                   params:parameters];
         }
         
-        if (showHUD) {
-            [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+        if (showView != nil) {
+            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
         }
         
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -1382,8 +1386,8 @@ static inline NSString *cachePath() {
             [self logWithFailError:error url:absolute params:nil];
         }
         
-        if (showHUD) {
-            [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+        if (showView != nil) {
+            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
         }
         fail(nil);
     }];
@@ -1402,7 +1406,7 @@ static inline NSString *cachePath() {
  *
  *	@param url						上传路径
  *	@param uploadingFile	待上传文件的路径
- *	@param showHUD		    菊花旋转
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  *	@param progress			上传进度
  *	@param success				上传成功回调
  *	@param fail					上传失败回调
@@ -1410,7 +1414,7 @@ static inline NSString *cachePath() {
  */
 + (GDHURLSessionTask *)uploadFileWithUrl:(NSString *)url
                            uploadingFile:(NSString *)uploadingFile
-                                 showHUD:(BOOL)showHUD
+                                showView:(UIView *)showView
                                 progress:(GDHUploadProgress)progress
                                  success:(GDHResponseSuccess)success
                                     fail:(GDHResponseFail)fail{
@@ -1420,14 +1424,16 @@ static inline NSString *cachePath() {
         return nil;
     }
     
-    if (showHUD) {
-        [[GDHNetworkingObject sharedInstance].hud showAnimated:YES];
+    if (showView) {
+        [GDHNetworkingObject sharedInstance].hud = [MBProgressHUD showHUDAddedTo:showView animated:YES];
+        [GDHNetworkingObject sharedInstance].hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
+        //[MBProgressHUD showHUDAddedTo:showView animated:YES];
     }
     
     if ([NSURL URLWithString:uploadingFile] == nil) {
         DTLog(@"uploadingFile无效，无法生成URL。请检查待上传文件是否存在");
-        if (showHUD) {
-            [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+        if (showView != nil) {
+            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
         }
         fail(nil);
         return nil;
@@ -1442,8 +1448,8 @@ static inline NSString *cachePath() {
     
     if (uploadURL == nil) {
         DTLog(@"URLString无效，无法生成URL。可能是URL中有中文或特殊字符，请尝试Encode URL");
-        if (showHUD) {
-            [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+        if (showView != nil) {
+            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
         }
         fail(nil);
         return nil;
@@ -1457,6 +1463,7 @@ static inline NSString *cachePath() {
         if (progress) {
             progress(uploadProgress.completedUnitCount, uploadProgress.totalUnitCount);
         }
+        [GDHNetworkingObject sharedInstance].hud.progress = (CGFloat)(uploadProgress.completedUnitCount) / (CGFloat)uploadProgress.totalUnitCount;
     } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
         [[self allTasks] removeObject:session];
         
@@ -1469,8 +1476,8 @@ static inline NSString *cachePath() {
                 [self logWithFailError:error url:response.URL.absoluteString params:nil];
             }
             
-            if (showHUD) {
-                [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             
         } else {
@@ -1480,8 +1487,8 @@ static inline NSString *cachePath() {
                                       params:nil];
             }
             
-            if (showHUD) {
-                [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             fail(nil);
         }
@@ -1500,14 +1507,14 @@ static inline NSString *cachePath() {
  *
  *  @param url           下载URL
  *  @param saveToPath    下载到哪个路径下
- *	@param showHUD		 菊花旋转
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  *  @param progressBlock 下载进度
  *  @param success       下载成功后的回调
  *  @param failure       下载失败后的回调
  */
 + (GDHURLSessionTask *)downloadWithUrl:(NSString *)url
                             saveToPath:(NSString *)saveToPath
-                               showHUD:(BOOL)showHUD
+                              showView:(UIView *)showView
                               progress:(GDHDownloadProgress)progressBlock
                                success:(GDHResponseSuccess)success
                                failure:(GDHResponseFail)failure{
@@ -1518,15 +1525,17 @@ static inline NSString *cachePath() {
         return nil;
     }
     
-    if (showHUD) {
-        [[GDHNetworkingObject sharedInstance].hud showAnimated:YES];
+    if (showView) {
+        [GDHNetworkingObject sharedInstance].hud = [MBProgressHUD showHUDAddedTo:showView animated:YES];
+        [GDHNetworkingObject sharedInstance].hud.mode = MBProgressHUDModeDeterminate;
+        //[MBProgressHUD showHUDAddedTo:showView animated:YES];MBProgressHUDModeDeterminate
     }
     
     if ([self baseUrl] == nil) {
         if ([NSURL URLWithString:url] == nil) {
             DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showHUD) {
-                [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             failure(nil);
             return nil;
@@ -1534,8 +1543,8 @@ static inline NSString *cachePath() {
     } else {
         if ([NSURL URLWithString:[NSString stringWithFormat:@"%@%@", [self baseUrl], url]] == nil) {
             DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showHUD) {
-                [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             failure(nil);
             return nil;
@@ -1551,6 +1560,8 @@ static inline NSString *cachePath() {
         if (progressBlock) {
             progressBlock(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount,downloadProgress.totalUnitCount-downloadProgress.completedUnitCount);
         }
+        
+        [GDHNetworkingObject sharedInstance].hud.progress = (CGFloat)(downloadProgress.completedUnitCount) / (CGFloat)downloadProgress.totalUnitCount;
     } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
         return [NSURL fileURLWithPath:saveToPath];
     } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
@@ -1563,8 +1574,8 @@ static inline NSString *cachePath() {
                       [self absoluteUrlWithPath:url]);
             }
             
-            if (showHUD) {
-                [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             
             if (success) {
@@ -1580,8 +1591,8 @@ static inline NSString *cachePath() {
                       [error description]);
             }
             
-            if (showHUD) {
-                [[GDHNetworkingObject sharedInstance].hud hideAnimated:YES];
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             failure(nil);
         }
@@ -1602,26 +1613,32 @@ static inline NSString *cachePath() {
     }
 }
 
-
--(MBProgressHUD *)hud {
-    if (_hud == nil) {
-        //x_hud = [[MBProgressHUD alloc] initWithView:[UIApplication sharedApplication].keyWindow];
-        _hud = [MBProgressHUD showHUDAddedTo:[UIApplication sharedApplication].keyWindow animated:YES];
+- (MBProgressHUD *)hud {
+    if (!_hud) {
+        _hud = [[MBProgressHUD alloc] init];
         // 隐藏时候从父控件中移除
         _hud.removeFromSuperViewOnHide = YES;
         // YES代表需要蒙版效果
-        //    hud.dimBackground = YES;
-        _hud.mode = MBProgressHUDModeIndeterminate;
-        _hud.animationType = MBProgressHUDAnimationFade;
-        _hud.delegate = self;
+        _hud.dimBackground = YES;
     }
     return _hud;
 }
 
-- (void)hudWasHidden:(MBProgressHUD *)hud {
-    self.hud = nil;
-}
 
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
