@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "GDHNetworking"
-  s.version      = "0.0.2"
+  s.version      = "1.0.0"
   s.summary      = "GDHNetworking is a high level request util based on AFNetworking."
   s.homepage     = "https://github.com/gdhGaoFei/GDHNetworking"
   s.license      = "MIT"
@@ -16,5 +16,5 @@ Pod::Spec.new do |s|
   s.framework = "CFNetwork"
 
   s.dependency "AFNetworking", "~> 3.1.0"
-  s.dependency "MBProgressHUD", "~> 1.0.0"
+  s.dependency "MBProgressHUD", "~> 0.9.2"
 end
