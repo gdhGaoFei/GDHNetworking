@@ -11,6 +11,7 @@
 #import <CommonCrypto/CommonDigest.h>
 #import "AFNetworking.h"
 #import "AFNetworkActivityIndicatorManager.h"
+#import "XMLDictionary.h"
 
 // ========= 加密措施 ==========
 @interface NSString (md5)
@@ -236,28 +237,35 @@
  */
 @property (nonatomic, strong) MBProgressHUD * hud;
 
+/**请求数据**/
+@property (nonatomic, assign) GDHRequestType requestType;
+/**响应数据**/
+@property (nonatomic, assign) GDHResponseType responseType;
+
 @end
 
 //=========== 静态变量
-static NSString * sg_privateNetworkBaseUrl = nil;//baseURL
-static NSString * sg_baseCacheDocuments = @"GDHNetworkCaches";//默认的缓存路径
-static BOOL sg_isBaseURLChanged = YES;//是否更换baseURL
-static NSTimeInterval sg_timeout = 60.0f;//默认请求时间为60秒
+static NSString * sg_privateNetworkBaseUrl     = nil;//baseURL
+static NSString * sg_baseCacheDocuments        = @"GDHNetworkCaches";//默认的缓存路径
+static BOOL sg_isBaseURLChanged                = YES;//是否更换baseURL
+static NSTimeInterval sg_timeout               = 60.0f;//默认请求时间为60秒
 static BOOL sg_shoulObtainLocalWhenUnconnected = NO;//检测网络是否异常
-static BOOL sg_cacheGet = YES;//是否从缓存中Get
-static BOOL sg_cachePost = NO;//是否从缓存中post
-static GDHNetworkStatus sg_networkStatus = GDHNetworkStatusReachableViaWiFi;//当前出入什么网络
-static NSUInteger sg_maxCacheSize = 0;//默认缓存大小
-static BOOL sg_isEnableInterfaceDebug = NO;//是否打印获取到的数据
-static GDHResponseType sg_responseType = GDHResponseTypeJSON;//响应数据默认类型
-static GDHRequestType  sg_requestType  = GDHRequestTypePlainText;//请求数据的默认类型
-static BOOL sg_shouldAutoEncode = NO;//是否允许自动编码URL
-static BOOL sg_shouldCallbackOnCancelRequest = YES;//当取消请求时，是否要回调
-static NSDictionary *sg_httpHeaders = nil;//请求头字典
+static BOOL sg_cacheGet                        = YES;//是否从缓存中Get
+static BOOL sg_cachePost                       = NO;//是否从缓存中post
+static GDHNetworkStatus sg_networkStatus       = GDHNetworkStatusReachableViaWiFi;//当前出入什么网络
+static NSUInteger sg_maxCacheSize              = 0;//默认缓存大小
+static BOOL sg_isEnableInterfaceDebug          = NO;//是否打印获取到的数据
+static GDHResponseType sg_responseType         = GDHResponseTypeJSON;//响应数据默认类型
+static GDHRequestType  sg_requestType          = GDHRequestTypePlainText;//请求数据的默认类型
+static BOOL sg_shouldAutoEncode                = NO;//是否允许自动编码URL
+static BOOL sg_shouldCallbackOnCancelRequest   = YES;//当取消请求时，是否要回调
+static NSDictionary *sg_httpHeaders            = nil;//请求头字典
 static NSMutableArray *sg_requestTasks;//所有的请求数组
-static AFHTTPSessionManager *sg_sharedManager = nil;
-
-
+static AFHTTPSessionManager *sg_sharedManager  = nil;
+static GDHResponseType sg_responseType_first   = GDHResponseTypeJSON;//响应数据默认类型
+static GDHRequestType  sg_requestType_first    = GDHRequestTypePlainText;//请求数据的默认类型
+static BOOL sg_requestType_complete            = NO;//请求数据的默认类型
+static BOOL sg_responseType_complete           = NO;//响应数据默认类型
 
 @implementation GDHNetworkingObject
 
@@ -453,7 +461,7 @@ static AFHTTPSessionManager *sg_sharedManager = nil;
  *  配置请求格式，默认为JSON。如果要求传XML或者PLIST，请在全局配置一下
  *
  *  @param requestType 请求格式，默认为JSON
- *  @param responseType 响应格式，默认为JSO，
+ *  @param responseType 响应格式，默认为JSON
  *  @param shouldAutoEncode YES or NO,默认为NO，是否自动encode url
  *  @param shouldCallbackOnCancelRequest 当取消请求时，是否要回调，默认为YES
  */
@@ -461,11 +469,31 @@ static AFHTTPSessionManager *sg_sharedManager = nil;
              responseType:(GDHResponseType)responseType
       shouldAutoEncodeUrl:(BOOL)shouldAutoEncode
   callbackOnCancelRequest:(BOOL)shouldCallbackOnCancelRequest{
-    sg_requestType = requestType;
-    sg_responseType = responseType;
-    sg_shouldAutoEncode = shouldAutoEncode;
+    sg_requestType_first  = requestType;
+    sg_responseType_first = responseType;
+    sg_shouldAutoEncode   = shouldAutoEncode;
     sg_shouldCallbackOnCancelRequest = shouldCallbackOnCancelRequest;
 }
+
+/**!
+ *  配置请求格式，默认为JSON。如果要求传XML或者PLIST，请在全局配置一下
+ *
+ *  @param requestType 请求格式，默认为JSON
+ *  @param responseType 响应格式，默认为JSON
+ *  @param requestChange 改变请求格式 请设置为YES
+ *  @param responseChange 改变响应格式 请设置为YES
+ */
++ (void)ChangeRequestType:(GDHRequestType)requestType
+             responseType:(GDHResponseType)responseType
+            requestChange:(BOOL)requestChange
+           responseChange:(BOOL)responseChange {
+    sg_requestType           = requestType;
+    sg_responseType          = responseType;
+    sg_requestType_complete  = requestChange;
+    sg_responseType_complete = responseChange;
+}
+
+
 + (BOOL)shouldEncode {
     return sg_shouldAutoEncode;
 }
@@ -628,7 +656,7 @@ static inline NSString *cachePath() {
         url = [self encodeUrl:url];
     }
     
-    AFHTTPSessionManager *manager = [self manager];
+    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
     NSString *absolute = [self absoluteUrlWithPath:url];
     
     if ([self baseUrl] == nil) {
@@ -638,7 +666,11 @@ static inline NSString *cachePath() {
             if (showView != nil) {
                 [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
-            failureBlock(nil);
+            if (failureBlock) {
+                failureBlock(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi];
             return nil;
         }
     } else {
@@ -650,7 +682,11 @@ static inline NSString *cachePath() {
             if (showView != nil) {
                 [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
-            failureBlock(nil);
+            if (failureBlock) {
+                failureBlock(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi];
             return nil;
         }
     }
@@ -685,14 +721,20 @@ static inline NSString *cachePath() {
                     if (showView != nil) {
                         [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
-//                    failureBlock(nil);
+                    
+                    //还原初始值
+                    [GDHNetworkingObject huanyuanchushizhi];
                     return nil;
                 }else{
                     if (showView != nil) {
                         [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
                     SHOW_ALERT(@"网络连接断开,请检查网络!");
-                    failureBlock(nil);
+                    if (failureBlock) {
+                        failureBlock(nil);
+                    }
+                    //还原初始值
+                    [GDHNetworkingObject huanyuanchushizhi];
                     return nil;
                 }
             }else{
@@ -700,7 +742,11 @@ static inline NSString *cachePath() {
                     [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                 }
                 SHOW_ALERT(@"网络连接断开,请检查网络!");
-                failureBlock(nil);
+                if (failureBlock) {
+                    failureBlock(nil);
+                }
+                //还原初始值
+                [GDHNetworkingObject huanyuanchushizhi];
                 return nil;
             }
         }else{
@@ -718,6 +764,7 @@ static inline NSString *cachePath() {
                         [object.delegate requestDidFinishLoading:[self tryToParseData:responseObject]];
                     };
                 }
+                
                 //方法
                 [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:responseObject] withObject:nil];
                 
@@ -733,10 +780,14 @@ static inline NSString *cachePath() {
                                              url:absolute
                                           params:params];
                 }
+                
                 if (showView != nil) {
                     [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                 }
                 
+                //还原初始值
+                [GDHNetworkingObject huanyuanchushizhi];
+
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [[self allTasks] removeObject:task];
                 
@@ -785,7 +836,6 @@ static inline NSString *cachePath() {
                         if (showView != nil) {
                             [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                         }
-                        failureBlock(nil);
                     }
                 } else {
                     //block
@@ -806,6 +856,9 @@ static inline NSString *cachePath() {
                         [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
                 }
+                
+                //还原初始值
+                [GDHNetworkingObject huanyuanchushizhi];
             }];
         }
     }else if (networkType == GDHNetWorkTypePOST){//POST请求
@@ -837,14 +890,21 @@ static inline NSString *cachePath() {
                     if (showView != nil) {
                         [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
-//                    failureBlock(nil);
+                    
+                    //还原初始值
+                    [GDHNetworkingObject huanyuanchushizhi];
+                    
                     return nil;
                 }else{
                     if (showView != nil) {
                         [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
                     SHOW_ALERT(@"网络连接断开,请检查网络!");
-                    failureBlock(nil);
+                    if (failureBlock) {
+                        failureBlock(nil);
+                    }
+                    //还原初始值
+                    [GDHNetworkingObject huanyuanchushizhi];
                     return nil;
                 }
             }else{//=========>不获取
@@ -852,7 +912,11 @@ static inline NSString *cachePath() {
                     [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                 }
                 SHOW_ALERT(@"网络连接断开,请检查网络!");
-                failureBlock(nil);
+                if (failureBlock) {
+                    failureBlock(nil);
+                }
+                //还原初始值
+                [GDHNetworkingObject huanyuanchushizhi];
                 return nil;
             }
         }else{//有网
@@ -895,6 +959,9 @@ static inline NSString *cachePath() {
                 if (showView != nil) {
                     [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                 }
+                
+                //还原初始值
+                [GDHNetworkingObject huanyuanchushizhi];
                 
             } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                 [[self allTasks] removeObject:task];
@@ -943,7 +1010,6 @@ static inline NSString *cachePath() {
                     if (showView != nil) {
                         [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
-                    
                 } else {
                     [self handleCallbackWithError:error fail:failureBlock];
                     
@@ -962,6 +1028,9 @@ static inline NSString *cachePath() {
                         [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
                 }
+                
+                //还原初始值
+                [GDHNetworkingObject huanyuanchushizhi];
             }];
         }
     }
@@ -976,19 +1045,28 @@ static inline NSString *cachePath() {
 #pragma mark - Private
 + (AFHTTPSessionManager *)manager {
     @synchronized (self) {
+        
+        GDHNetworkingObject * networkObject = [GDHNetworkingObject sharedInstance];
+        
         // 只要不切换baseurl，就一直使用同一个session manager
         if (sg_sharedManager == nil || sg_isBaseURLChanged) {
             // 开启转圈圈
             [AFNetworkActivityIndicatorManager sharedManager].enabled = YES;
             
             AFHTTPSessionManager *manager = nil;;
-            if ([self baseUrl] != nil) {
-                manager = [[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:[self baseUrl]]];
+            if ([GDHNetworkingObject baseUrl] != nil) {
+                manager = [[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:[GDHNetworkingObject baseUrl]]];
             } else {
                 manager = [AFHTTPSessionManager manager];
             }
             
-            switch (sg_requestType) {
+            if (!sg_requestType_complete) {//请求数据
+                networkObject.requestType = sg_requestType_first;
+            }else{
+                networkObject.requestType = sg_requestType;
+            }
+            
+            switch (networkObject.requestType) {
                 case GDHRequestTypeJSON: {
                     manager.requestSerializer = [AFJSONRequestSerializer serializer];
                     break;
@@ -1002,7 +1080,14 @@ static inline NSString *cachePath() {
                 }
             }
             
-            switch (sg_responseType) {
+            if (!sg_responseType_complete) {//响应数据
+                networkObject.responseType = sg_responseType_first;
+            }else{
+                networkObject.responseType = sg_responseType;
+            }
+            
+            
+            switch (networkObject.responseType) {
                 case GDHResponseTypeJSON: {
                     manager.responseSerializer = [AFJSONResponseSerializer serializer];
                     break;
@@ -1127,6 +1212,7 @@ static inline NSString *cachePath() {
     }
 }
 
+//尝试解析请求下来的数据
 + (id)tryToParseData:(id)responseData {
     if ([responseData isKindOfClass:[NSData class]]) {
         // 尝试解析成JSON
@@ -1144,18 +1230,30 @@ static inline NSString *cachePath() {
                 return response;
             }
         }
-    } else {
+    } else if ([responseData isKindOfClass:[NSXMLParser class]]){
+        return [NSDictionary dictionaryWithXMLParser:responseData];
+    }else  {
         return responseData;
     }
 }
 
 /**----解析数据*/
 + (void)logWithSuccessResponse:(id)response url:(NSString *)url params:(NSDictionary *)params {
+    
+    NSDictionary * dic = (NSDictionary *)response;
+    if ([response isKindOfClass:[NSXMLParser class]]) {
+        dic = [NSDictionary dictionaryWithXMLParser:response];
+    }
+    
+    NSString * string = @"解析数据出错";
+    if (dic != nil) {
+        NSData * data = [NSJSONSerialization dataWithJSONObject:dic options:NSJSONWritingPrettyPrinted error:nil];
+        string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    }
     DTLog(@"\n");
     DTLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",
           [self generateGETAbsoluteURL:url params:params],
-          params,
-          [self tryToParseData:response]);
+          params, string);
 }
 
 /**-----解析数据*/
@@ -1201,6 +1299,7 @@ static inline NSString *cachePath() {
 }
 
 + (void)cacheResponseObject:(id)responseObject request:(NSString *)request parameters:params {
+    responseObject = [self tryToParseData:responseObject];
     if (request && responseObject && ![responseObject isKindOfClass:[NSNull class]]) {
         NSString *directoryPath = cachePath();
         
@@ -1309,6 +1408,11 @@ static inline NSString *cachePath() {
     
     if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown ) {
         SHOW_ALERT(@"网络连接断开,请检查网络!");
+        if (fail) {
+            fail(nil);
+        }
+        //还原初始值
+        [GDHNetworkingObject huanyuanchushizhi];
         return nil;
     }
     
@@ -1324,7 +1428,11 @@ static inline NSString *cachePath() {
             if (showView != nil) {
                 [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
-            fail(nil);
+            if (fail) {
+                fail(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi];
             return nil;
         }
     } else {
@@ -1333,7 +1441,11 @@ static inline NSString *cachePath() {
             if (showView != nil) {
                 [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
-            fail(nil);
+            if (fail) {
+                fail(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi];
             return nil;
         }
     }
@@ -1344,7 +1456,7 @@ static inline NSString *cachePath() {
     
     NSString *absolute = [self absoluteUrlWithPath:url];
     
-    AFHTTPSessionManager *manager = [self manager];
+    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
     GDHURLSessionTask *session = [manager POST:url parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         NSData *imageData = UIImageJPEGRepresentation(image, 1);
         
@@ -1376,7 +1488,8 @@ static inline NSString *cachePath() {
         if (showView != nil) {
             [MBProgressHUD hideAllHUDsForView:showView animated:YES];
         }
-        
+        //还原初始值
+        [GDHNetworkingObject huanyuanchushizhi];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         [[self allTasks] removeObject:task];
         
@@ -1389,7 +1502,11 @@ static inline NSString *cachePath() {
         if (showView != nil) {
             [MBProgressHUD hideAllHUDsForView:showView animated:YES];
         }
-        fail(nil);
+        if (fail) {
+            fail(nil);
+        }
+        //还原初始值
+        [GDHNetworkingObject huanyuanchushizhi];
     }];
     
     [session resume];
@@ -1421,6 +1538,11 @@ static inline NSString *cachePath() {
     
     if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown ) {
         SHOW_ALERT(@"网络连接断开,请检查网络!");
+        if (fail) {
+            fail(nil);
+        }
+        //还原初始值
+        [GDHNetworkingObject huanyuanchushizhi];
         return nil;
     }
     
@@ -1435,7 +1557,11 @@ static inline NSString *cachePath() {
         if (showView != nil) {
             [MBProgressHUD hideAllHUDsForView:showView animated:YES];
         }
-        fail(nil);
+        if (fail) {
+            fail(nil);
+        }
+        //还原初始值
+        [GDHNetworkingObject huanyuanchushizhi];
         return nil;
     }
     
@@ -1451,11 +1577,15 @@ static inline NSString *cachePath() {
         if (showView != nil) {
             [MBProgressHUD hideAllHUDsForView:showView animated:YES];
         }
-        fail(nil);
+        if (fail) {
+            fail(nil);
+        }
+        //还原初始值
+        [GDHNetworkingObject huanyuanchushizhi];
         return nil;
     }
     
-    AFHTTPSessionManager *manager = [self manager];
+    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
     NSURLRequest *request = [NSURLRequest requestWithURL:uploadURL];
     GDHURLSessionTask *session = nil;
     
@@ -1479,6 +1609,8 @@ static inline NSString *cachePath() {
             if (showView != nil) {
                 [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi];
             
         } else {
             if ([self isDebug]) {
@@ -1490,7 +1622,11 @@ static inline NSString *cachePath() {
             if (showView != nil) {
                 [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
-            fail(nil);
+            if (fail) {
+                fail(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi];
         }
     }];
     
@@ -1522,6 +1658,7 @@ static inline NSString *cachePath() {
     if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown ) {
         SHOW_ALERT(@"网络连接断开,请检查网络!");
         failure(nil);
+        [GDHNetworkingObject huanyuanchushizhi];
         return nil;
     }
     
@@ -1538,6 +1675,7 @@ static inline NSString *cachePath() {
                 [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             failure(nil);
+            [GDHNetworkingObject huanyuanchushizhi];
             return nil;
         }
     } else {
@@ -1547,12 +1685,13 @@ static inline NSString *cachePath() {
                 [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             failure(nil);
+            [GDHNetworkingObject huanyuanchushizhi];
             return nil;
         }
     }
     
     NSURLRequest *downloadRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
-    AFHTTPSessionManager *manager = [self manager];
+    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
     
     GDHURLSessionTask *session = nil;
     
@@ -1580,6 +1719,7 @@ static inline NSString *cachePath() {
             
             if (success) {
                 success(filePath.absoluteString);
+                [GDHNetworkingObject huanyuanchushizhi];
             }
             
         } else {
@@ -1595,6 +1735,7 @@ static inline NSString *cachePath() {
                 [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             failure(nil);
+            [GDHNetworkingObject huanyuanchushizhi];
         }
     }];
     
@@ -1623,6 +1764,12 @@ static inline NSString *cachePath() {
     }
     return _hud;
 }
+
++ (void)huanyuanchushizhi {
+    sg_requestType_complete  = NO;
+    sg_responseType_complete = NO;
+}
+
 
 
 @end

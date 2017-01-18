@@ -10,9 +10,9 @@
 #import "GDHNetworkingManager.h"
 
 //正式库 上架时需要URL
-static NSString * const baseURL = @"http://op.juhe.cn/";
+static NSString * const baseURL = @"http://v.juhe.cn/";
 //测试库 调试时需要URL
-//static NSString * const baseURL = @"http://op.juhe.cn/";
+//static NSString * const baseURL = @"http://v.juhe.cn/";
 
 
 @interface AppDelegate ()

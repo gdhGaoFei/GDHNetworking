@@ -467,7 +467,7 @@ typedef void(^GDHResponseFail)(NSError * error);
  *  配置请求格式，默认为JSON。如果要求传XML或者PLIST，请在全局配置一下
  *
  *  @param requestType 请求格式，默认为JSON
- *  @param responseType 响应格式，默认为JSO，
+ *  @param responseType 响应格式，默认为JSON
  *  @param shouldAutoEncode YES or NO,默认为NO，是否自动encode url
  *  @param shouldCallbackOnCancelRequest 当取消请求时，是否要回调，默认为YES
  */
@@ -475,6 +475,20 @@ typedef void(^GDHResponseFail)(NSError * error);
              responseType:(GDHResponseType)responseType
       shouldAutoEncodeUrl:(BOOL)shouldAutoEncode
   callbackOnCancelRequest:(BOOL)shouldCallbackOnCancelRequest;
+
+
+/**!
+ *  配置请求格式，默认为JSON。如果要求传XML或者PLIST，请在全局配置一下
+ *
+ *  @param requestType 请求格式，默认为JSON
+ *  @param responseType 响应格式，默认为JSON
+ *  @param requestChange 改变请求格式 请设置为YES
+ *  @param responseChange 改变响应格式 请设置为YES
+ */
++ (void)ChangeRequestType:(GDHRequestType)requestType
+             responseType:(GDHResponseType)responseType
+            requestChange:(BOOL)requestChange
+           responseChange:(BOOL)responseChange;
 
 /*!
  *

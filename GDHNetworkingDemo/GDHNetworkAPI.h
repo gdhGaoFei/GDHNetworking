@@ -20,4 +20,23 @@
                   showView:(UIView *)showView
               refreshCache:(BOOL)refreshCache;
 
+/**获取汽车信息*/
++(void)getXMLBusQueryWithCity:(NSString *)city
+                   success:(GDHResponseSuccess)success
+                     faile:(GDHResponseFail)faile
+                  showView:(UIView *)showView
+              refreshCache:(BOOL)refreshCache;
+
+/**获取汽车信息*/
++(void)getNewsQuerysuccess:(GDHResponseSuccess)success
+                     faile:(GDHResponseFail)faile
+                  showView:(UIView *)showView
+              refreshCache:(BOOL)refreshCache;
+
+/**获取汽车信息*/
++(void)getXMLNewsQuerysuccess:(GDHResponseSuccess)success
+                        faile:(GDHResponseFail)faile
+                     showView:(UIView *)showView
+                 refreshCache:(BOOL)refreshCache;
+
 @end

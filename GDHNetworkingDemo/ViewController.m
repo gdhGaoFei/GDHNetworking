@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "GDHNetworkAPI.h"
+#import "XMLDictionary.h"
 
 @interface ViewController ()<GDHNetworkDelegate>
 
@@ -21,27 +22,38 @@
 }
 /**block回调数据*/
 - (IBAction)blockBtnAct:(id)sender {
-    [GDHNetworkAPI getBusQueryWithCity:@"青岛"
-                               success:^(id returnData) {
-                                   [GDHNetworkAPI loadCreateWithDic:returnData withName:@"block回调数据" withFileName:@"block"];
-                               } faile:^(NSError *error) {
-                                   NSLog(@"=======error =======%@======",error);
-                               } showView:self.view refreshCache:NO];
+//    [GDHNetworkAPI getBusQueryWithCity:@"青岛"
+//                               success:^(id returnData) {
+//                                   [GDHNetworkAPI loadCreateWithDic:returnData withName:@"block回调数据" withFileName:@"block"];
+//                               } faile:^(NSError *error) {
+//                                   NSLog(@"=======error =======%@======",error);
+//                               } showView:self.view refreshCache:NO];
+    
+    
+    [GDHNetworkAPI getNewsQuerysuccess:^(id returnData) {
+        
+    } faile:^(NSError *error) {
+        DTLog(@"=======error =======%@======",error);
+    } showView:self.view refreshCache:YES];
+    
 }
 /**Delegate回调数据*/
 - (IBAction)delegateBtnAct:(id)sender {
-    NSDictionary * parm = @{@"station":@"北京",
-                            @"key":@"e97e5292887f3aa1f99ab7b451ad2ad9",};
-    [GDHNetworkingManager getRequstWithURL:@"onebox/bus/query"
+    NSDictionary * parm = @{@"key":@"89640cff0e8e385e53e6995a4e41a043",
+                            @"dtype":@"json",
+                            @"word":@"高"};
+    [GDHNetworkingManager getRequstWithURL:@"xhzd/query"
                                     params:parm
                                   delegate:self
                                   progress:nil refreshCache:NO showView:self.view];
 }
 /**SEL回调数据*/
 - (IBAction)selBtnAct:(id)sender {
-    NSDictionary * parm = @{@"station":@"广州",
-                            @"key":@"e97e5292887f3aa1f99ab7b451ad2ad9",};
-    [GDHNetworkingManager getRequstWithURL:@"onebox/bus/query"
+
+    NSDictionary * parm = @{@"key":@"89640cff0e8e385e53e6995a4e41a043",
+                            @"dtype":@"json",
+                            @"word":@"高"};
+    [GDHNetworkingManager getRequstWithURL:@"xhzd/query"
                                     params:parm
                                     target:self
                                     action:@selector(finishedRequest:didFaild:)
@@ -51,6 +63,18 @@
 }
 /**上传图片*/
 - (IBAction)upLoadImageBtnAct:(id)sender {
+    
+    [GDHNetworkAPI getXMLNewsQuerysuccess:^(id returnData) {
+        [GDHNetworkAPI loadCreateWithDic:returnData withName:@"block回调数据" withFileName:@"block"];
+    } faile:^(NSError *error) {
+        DTLog(@"=======error =======%@======",error);
+    } showView:self.view refreshCache:YES];
+    
+//    [GDHNetworkAPI getXMLBusQueryWithCity:@"青岛" success:^(id returnData) {
+//        [GDHNetworkAPI loadCreateWithDic:returnData withName:@"block回调数据" withFileName:@"block"];
+//    } faile:^(NSError *error) {
+//        DTLog(@"=======error =======%@======",error);
+//    } showView:self.view refreshCache:YES];
     
     /*
      [GDHNetworkingObject uploadWithImage:<#(UIImage *)#>
