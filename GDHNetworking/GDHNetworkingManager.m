@@ -1240,7 +1240,7 @@ static inline NSString *cachePath() {
 /**----解析数据*/
 + (void)logWithSuccessResponse:(id)response url:(NSString *)url params:(NSDictionary *)params {
     
-    NSDictionary * dic = (NSDictionary *)response;
+    NSDictionary * dic = (NSDictionary *)[GDHNetworkingObject tryToParseData:response];
     if ([response isKindOfClass:[NSXMLParser class]]) {
         dic = [NSDictionary dictionaryWithXMLParser:response];
     }
