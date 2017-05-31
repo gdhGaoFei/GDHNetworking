@@ -146,13 +146,13 @@ typedef void(^GDHResponseFail)(NSError * error);
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)getRequstWithURL:(NSString *)url
-                  params:(NSDictionary *)paramsDict
-            successBlock:(GDHResponseSuccess)successBlock
-            failureBlock:(GDHResponseFail)failureBlock
-                progress:(GDHGetProgress)progress
-            refreshCache:(BOOL)refreshCache
-                showView:(UIView *)showView;
++ (GDHURLSessionTask *)getRequstWithURL:(NSString *)url
+                                 params:(NSDictionary *)paramsDict
+                           successBlock:(GDHResponseSuccess)successBlock
+                           failureBlock:(GDHResponseFail)failureBlock
+                               progress:(GDHGetProgress)progress
+                           refreshCache:(BOOL)refreshCache
+                               showView:(UIView *)showView;
 
 /**
  *   GET请求通过代理回调
@@ -164,12 +164,12 @@ typedef void(^GDHResponseFail)(NSError * error);
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)getRequstWithURL:(NSString*)url
-                  params:(NSDictionary*)paramsDict
-                delegate:(id<GDHNetworkDelegate>)delegate
-                progress:(GDHGetProgress)progress
-            refreshCache:(BOOL)refreshCache
-                showView:(UIView *)showView;
++ (GDHURLSessionTask *)getRequstWithURL:(NSString*)url
+                                 params:(NSDictionary*)paramsDict
+                               delegate:(id<GDHNetworkDelegate>)delegate
+                               progress:(GDHGetProgress)progress
+                           refreshCache:(BOOL)refreshCache
+                               showView:(UIView *)showView;
 /**
  *   get 请求通过 taget 回调方法
  *
@@ -181,13 +181,13 @@ typedef void(^GDHResponseFail)(NSError * error);
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)getRequstWithURL:(NSString*)url
-                  params:(NSDictionary*)paramsDict
-                  target:(id)target
-                  action:(SEL)action
-                progress:(GDHGetProgress)progress
-            refreshCache:(BOOL)refreshCache
-                showView:(UIView *)showView;
++ (GDHURLSessionTask *)getRequstWithURL:(NSString*)url
+                                 params:(NSDictionary*)paramsDict
+                                 target:(id)target
+                                 action:(SEL)action
+                               progress:(GDHGetProgress)progress
+                           refreshCache:(BOOL)refreshCache
+                               showView:(UIView *)showView;
 
 #pragma mark - 发送 POST 请求的方法
 /**
@@ -201,13 +201,13 @@ typedef void(^GDHResponseFail)(NSError * error);
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)postReqeustWithURL:(NSString*)url
-                    params:(NSDictionary*)paramsDict
-              successBlock:(GDHResponseSuccess)successBlock
-              failureBlock:(GDHResponseFail)failureBlock
-                  progress:(GDHGetProgress)progress
-              refreshCache:(BOOL)refreshCache
-                  showView:(UIView *)showView;
++ (GDHURLSessionTask *)postReqeustWithURL:(NSString*)url
+                                   params:(NSDictionary*)paramsDict
+                             successBlock:(GDHResponseSuccess)successBlock
+                             failureBlock:(GDHResponseFail)failureBlock
+                                 progress:(GDHGetProgress)progress
+                             refreshCache:(BOOL)refreshCache
+                                 showView:(UIView *)showView;
 /**
  *   post请求通过代理回调
  *
@@ -218,12 +218,12 @@ typedef void(^GDHResponseFail)(NSError * error);
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)postReqeustWithURL:(NSString*)url
-                    params:(NSDictionary*)paramsDict
-                  delegate:(id<GDHNetworkDelegate>)delegate
-                  progress:(GDHGetProgress)progress
-              refreshCache:(BOOL)refreshCache
-                  showView:(UIView *)showView;
++ (GDHURLSessionTask *)postReqeustWithURL:(NSString*)url
+                                   params:(NSDictionary*)paramsDict
+                                 delegate:(id<GDHNetworkDelegate>)delegate
+                                 progress:(GDHGetProgress)progress
+                             refreshCache:(BOOL)refreshCache
+                                 showView:(UIView *)showView;
 /**
  *   post 请求通过 target 回调结果
  *
@@ -234,13 +234,13 @@ typedef void(^GDHResponseFail)(NSError * error);
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)postReqeustWithURL:(NSString*)url
-                    params:(NSDictionary*)paramsDict
-                    target:(id)target
-                    action:(SEL)action
-                  progress:(GDHGetProgress)progress
-              refreshCache:(BOOL)refreshCache
-                  showView:(UIView *)showView;
++ (GDHURLSessionTask *)postReqeustWithURL:(NSString*)url
+                                   params:(NSDictionary*)paramsDict
+                                   target:(id)target
+                                   action:(SEL)action
+                                 progress:(GDHGetProgress)progress
+                             refreshCache:(BOOL)refreshCache
+                                 showView:(UIView *)showView;
 
 @end
 
@@ -352,7 +352,6 @@ typedef void(^GDHResponseFail)(NSError * error);
                                     fail:(GDHResponseFail)fail;
 
 /*!
- *  @author 黄仪标, 16-01-08 15:01:11
  *
  *  下载文件
  *

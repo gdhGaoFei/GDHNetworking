@@ -58,19 +58,19 @@
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)getRequstWithURL:(NSString*)url
-                  params:(NSDictionary*)params
-                  target:(id)target
-                  action:(SEL)action
-                delegate:(id)delegate
-            successBlock:(GDHResponseSuccess)successBlock
-            failureBlock:(GDHResponseFail)failureBlock
-                progress:(GDHGetProgress)progress
-            refreshCache:(BOOL)refreshCache
-                showView:(UIView *)showView
++ (GDHURLSessionTask *)getRequstWithURL:(NSString*)url
+                                 params:(NSDictionary*)params
+                                 target:(id)target
+                                 action:(SEL)action
+                               delegate:(id)delegate
+                           successBlock:(GDHResponseSuccess)successBlock
+                           failureBlock:(GDHResponseFail)failureBlock
+                               progress:(GDHGetProgress)progress
+                           refreshCache:(BOOL)refreshCache
+                               showView:(UIView *)showView
 {
     NSMutableDictionary *mutableDict = [NSMutableDictionary dictionaryWithDictionary:params];
-    [GDHNetworkingObject initWithtype:GDHNetWorkTypeGET url:url params:mutableDict refreshCache:refreshCache delegate:delegate target:target action:action hashValue:0 showView:showView progress:progress successBlock:successBlock failureBlock:failureBlock];
+    return [GDHNetworkingObject initWithtype:GDHNetWorkTypeGET url:url params:mutableDict refreshCache:refreshCache delegate:delegate target:target action:action hashValue:0 showView:showView progress:progress successBlock:successBlock failureBlock:failureBlock];
 }
 
 
@@ -85,14 +85,14 @@
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)getRequstWithURL:(NSString *)url
-                  params:(NSDictionary *)paramsDict
-            successBlock:(GDHResponseSuccess)successBlock
-            failureBlock:(GDHResponseFail)failureBlock
-                progress:(GDHGetProgress)progress
-            refreshCache:(BOOL)refreshCache
-                showView:(UIView *)showView{
-    [self getRequstWithURL:url params:paramsDict target:nil action:nil delegate:nil successBlock:successBlock failureBlock:failureBlock progress:progress refreshCache:refreshCache showView:showView];
++ (GDHURLSessionTask *)getRequstWithURL:(NSString *)url
+                                 params:(NSDictionary *)paramsDict
+                           successBlock:(GDHResponseSuccess)successBlock
+                           failureBlock:(GDHResponseFail)failureBlock
+                               progress:(GDHGetProgress)progress
+                           refreshCache:(BOOL)refreshCache
+                               showView:(UIView *)showView{
+    return [self getRequstWithURL:url params:paramsDict target:nil action:nil delegate:nil successBlock:successBlock failureBlock:failureBlock progress:progress refreshCache:refreshCache showView:showView];
 }
 
 /**
@@ -105,13 +105,13 @@
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)getRequstWithURL:(NSString*)url
-                  params:(NSDictionary*)paramsDict
-                delegate:(id<GDHNetworkDelegate>)delegate
-                progress:(GDHGetProgress)progress
-            refreshCache:(BOOL)refreshCache
-                showView:(UIView *)showView{
-    [self getRequstWithURL:url params:paramsDict target:nil action:nil delegate:delegate successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showView:showView];
++ (GDHURLSessionTask *)getRequstWithURL:(NSString*)url
+                                 params:(NSDictionary*)paramsDict
+                               delegate:(id<GDHNetworkDelegate>)delegate
+                               progress:(GDHGetProgress)progress
+                           refreshCache:(BOOL)refreshCache
+                               showView:(UIView *)showView{
+    return [self getRequstWithURL:url params:paramsDict target:nil action:nil delegate:delegate successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showView:showView];
 }
 /**
  *   get 请求通过 taget 回调方法
@@ -124,14 +124,14 @@
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)getRequstWithURL:(NSString*)url
-                  params:(NSDictionary*)paramsDict
-                  target:(id)target
-                  action:(SEL)action
-                progress:(GDHGetProgress)progress
-            refreshCache:(BOOL)refreshCache
-                showView:(UIView *)showView{
-    [self getRequstWithURL:url params:paramsDict target:target action:action delegate:nil successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showView:showView];
++ (GDHURLSessionTask *)getRequstWithURL:(NSString*)url
+                                 params:(NSDictionary*)paramsDict
+                                 target:(id)target
+                                 action:(SEL)action
+                               progress:(GDHGetProgress)progress
+                           refreshCache:(BOOL)refreshCache
+                               showView:(UIView *)showView{
+    return [self getRequstWithURL:url params:paramsDict target:target action:action delegate:nil successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showView:showView];
 }
 
 #pragma mark - 发送 POST 请求的方法
@@ -150,18 +150,18 @@
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)postReqeustWithURL:(NSString*)url
-                    params:(NSDictionary*)params
-                    target:(id)target
-                    action:(SEL)action
-                  delegate:(id<GDHNetworkDelegate>)delegate
-              successBlock:(GDHResponseSuccess)successBlock
-              failureBlock:(GDHResponseFail)failureBlock
-                  progress:(GDHGetProgress)progress
-              refreshCache:(BOOL)refreshCache
-                  showView:(UIView *)showView{
++ (GDHURLSessionTask *)postReqeustWithURL:(NSString*)url
+                                   params:(NSDictionary*)params
+                                   target:(id)target
+                                   action:(SEL)action
+                                 delegate:(id<GDHNetworkDelegate>)delegate
+                             successBlock:(GDHResponseSuccess)successBlock
+                             failureBlock:(GDHResponseFail)failureBlock
+                                 progress:(GDHGetProgress)progress
+                             refreshCache:(BOOL)refreshCache
+                                 showView:(UIView *)showView{
     NSMutableDictionary *mutableDict = [NSMutableDictionary dictionaryWithDictionary:params];
-    [GDHNetworkingObject initWithtype:GDHNetWorkTypePOST url:url params:mutableDict refreshCache:refreshCache delegate:delegate target:target action:action hashValue:1 showView:showView progress:progress successBlock:successBlock failureBlock:failureBlock];
+    return [GDHNetworkingObject initWithtype:GDHNetWorkTypePOST url:url params:mutableDict refreshCache:refreshCache delegate:delegate target:target action:action hashValue:1 showView:showView progress:progress successBlock:successBlock failureBlock:failureBlock];
 }
 
 /**
@@ -175,14 +175,14 @@
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)postReqeustWithURL:(NSString*)url
-                    params:(NSDictionary*)paramsDict
-              successBlock:(GDHResponseSuccess)successBlock
-              failureBlock:(GDHResponseFail)failureBlock
-                  progress:(GDHGetProgress)progress
-              refreshCache:(BOOL)refreshCache
-                  showView:(UIView *)showView{
-    [self postReqeustWithURL:url params:paramsDict target:nil action:nil delegate:nil successBlock:successBlock failureBlock:failureBlock progress:progress refreshCache:refreshCache showView:showView];
++ (GDHURLSessionTask *)postReqeustWithURL:(NSString*)url
+                                   params:(NSDictionary*)paramsDict
+                             successBlock:(GDHResponseSuccess)successBlock
+                             failureBlock:(GDHResponseFail)failureBlock
+                                 progress:(GDHGetProgress)progress
+                             refreshCache:(BOOL)refreshCache
+                                 showView:(UIView *)showView{
+    return [self postReqeustWithURL:url params:paramsDict target:nil action:nil delegate:nil successBlock:successBlock failureBlock:failureBlock progress:progress refreshCache:refreshCache showView:showView];
 }
 /**
  *   post请求通过代理回调
@@ -194,13 +194,13 @@
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)postReqeustWithURL:(NSString*)url
-                    params:(NSDictionary*)paramsDict
-                  delegate:(id<GDHNetworkDelegate>)delegate
-                  progress:(GDHGetProgress)progress
-              refreshCache:(BOOL)refreshCache
-                  showView:(UIView *)showView{
-    [self postReqeustWithURL:url params:paramsDict target:nil action:nil delegate:delegate successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showView:showView];
++ (GDHURLSessionTask *)postReqeustWithURL:(NSString*)url
+                                   params:(NSDictionary*)paramsDict
+                                 delegate:(id<GDHNetworkDelegate>)delegate
+                                 progress:(GDHGetProgress)progress
+                             refreshCache:(BOOL)refreshCache
+                                 showView:(UIView *)showView{
+    return [self postReqeustWithURL:url params:paramsDict target:nil action:nil delegate:delegate successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showView:showView];
 }
 /**
  *   post 请求通过 target 回调结果
@@ -212,14 +212,14 @@
  *   @param refreshCache 是否刷新缓存。由于请求成功也可能没有数据，对于业务失败，只能通过人为手动判断
  *   @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
  */
-+ (void)postReqeustWithURL:(NSString*)url
-                    params:(NSDictionary*)paramsDict
-                    target:(id)target
-                    action:(SEL)action
-                  progress:(GDHGetProgress)progress
-              refreshCache:(BOOL)refreshCache
-                  showView:(UIView *)showView{
-    [self postReqeustWithURL:url params:paramsDict target:target action:action delegate:nil successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showView:showView];
++ (GDHURLSessionTask *)postReqeustWithURL:(NSString*)url
+                                   params:(NSDictionary*)paramsDict
+                                   target:(id)target
+                                   action:(SEL)action
+                                 progress:(GDHGetProgress)progress
+                             refreshCache:(BOOL)refreshCache
+                                 showView:(UIView *)showView{
+    return [self postReqeustWithURL:url params:paramsDict target:target action:action delegate:nil successBlock:nil failureBlock:nil progress:progress refreshCache:refreshCache showView:showView];
 }
 
 @end
@@ -1528,7 +1528,7 @@ static inline NSString *cachePath() {
  *	@param success				上传成功回调
  *	@param fail					上传失败回调
  *
- */
+ */        
 + (GDHURLSessionTask *)uploadFileWithUrl:(NSString *)url
                            uploadingFile:(NSString *)uploadingFile
                                 showView:(UIView *)showView
