@@ -694,11 +694,12 @@ static inline NSString *cachePath() {
     GDHURLSessionTask *session = nil;
     
     if (networkType == GDHNetWorkTypeGET) {//GET请求
-        if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown) {
-            if (refreshCache) {
-                id response = [GDHNetworkingObject cahceResponseWithURL:absolute
-                                                             parameters:params];
-                if (response) {//缓存数据中存在
+        if (sg_cacheGet) {//需要获取缓存
+            if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown) {
+                id response = [GDHNetworkingObject cahceResponseWithURL:absolute parameters:params];
+
+                if (refreshCache && response) {//缓存数据中存在
+                    
                     if (successBlock) {//block返回数据
                         [self successResponse:response callback:successBlock];
                     }
@@ -713,131 +714,86 @@ static inline NSString *cachePath() {
                     [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
                     
                     if ([self isDebug]) {
-                        [self logWithSuccessResponse:response
-                                                 url:absolute
-                                              params:params];
+                        [self logWithSuccessResponse:response url:absolute params:params];
                     }
                     
-                    if (showView != nil) {
-                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                    }
+                    if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:true];
                     
                     //还原初始值
                     [GDHNetworkingObject huanyuanchushizhi];
                     return nil;
                 }else{
-                    if (showView != nil) {
-                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                    }
+                    if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:true];
+                    if (failureBlock) failureBlock(nil);
                     SHOW_ALERT(@"网络连接断开,请检查网络!");
-                    if (failureBlock) {
-                        failureBlock(nil);
-                    }
                     //还原初始值
                     [GDHNetworkingObject huanyuanchushizhi];
                     return nil;
                 }
-            }else{
-                if (showView != nil) {
-                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                }
-                SHOW_ALERT(@"网络连接断开,请检查网络!");
-                if (failureBlock) {
-                    failureBlock(nil);
-                }
-                //还原初始值
-                [GDHNetworkingObject huanyuanchushizhi];
-                return nil;
             }
-        }else{
-            session = [manager GET:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
-                if (progress) {
-                    progress(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount,downloadProgress.totalUnitCount-downloadProgress.completedUnitCount);
-                }
-            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                if (successBlock) {//block
-                    [self successResponse:responseObject callback:successBlock];
-                }
+        }
+        
+        session = [manager GET:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
+            if (progress) {
+                progress(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount,downloadProgress.totalUnitCount-downloadProgress.completedUnitCount);
+            }
+        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            
+            //Block
+            if (successBlock) [self successResponse:responseObject callback:successBlock];
+            
+            if (delegate) {//delegate
+                if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
+                    [object.delegate requestDidFinishLoading:[self tryToParseData:responseObject]];
+                };
+            }
+            
+            //方法
+            [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:responseObject] withObject:nil];
+            
+            if (sg_cacheGet) {
+                [self cacheResponseObject:responseObject request:absolute parameters:params];
+            }
+            
+            [[self allTasks] removeObject:task];
+            
+            if ([self isDebug]) {
+                [self logWithSuccessResponse:responseObject url:absolute params:params];
+            }
+            
+            if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi];
+            
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            [[self allTasks] removeObject:task];
+            
+            if ([error code] < 0 && refreshCache) {// 获取缓存
+                id response = [GDHNetworkingObject cahceResponseWithURL:absolute parameters:params];
                 
-                if (delegate) {//delegate
-                    if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
-                        [object.delegate requestDidFinishLoading:[self tryToParseData:responseObject]];
-                    };
-                }
-                
-                //方法
-                [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:responseObject] withObject:nil];
-                
-                
-                if (sg_cacheGet) {
-                    [self cacheResponseObject:responseObject request:absolute parameters:params];
-                }
-                
-                [[self allTasks] removeObject:task];
-                
-                if ([self isDebug]) {
-                    [self logWithSuccessResponse:responseObject
-                                             url:absolute
-                                          params:params];
-                }
-                
-                if (showView != nil) {
-                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                }
-                
-                //还原初始值
-                [GDHNetworkingObject huanyuanchushizhi];
-
-            } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [[self allTasks] removeObject:task];
-                
-                if ([error code] < 0 && refreshCache) {// 获取缓存
-                    id response = [GDHNetworkingObject cahceResponseWithURL:absolute
-                                                                 parameters:params];
-                    if (response) {
-                        if (successBlock) {//block返回数据
-                            [self successResponse:response callback:successBlock];
-                        }
-                        
-                        if (delegate) {//代理
-                            if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
-                                [object.delegate requestDidFinishLoading:[self tryToParseData:response]];
-                            };
-                        }
-                        //方法
-                        [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
-                        
-                        if ([self isDebug]) {
-                            [self logWithSuccessResponse:response
-                                                     url:absolute
-                                                  params:params];
-                        }
-                        if (showView != nil) {
-                            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                        }
-                        
-                        
-                    } else {
-                        
-                        //block
-                        [self handleCallbackWithError:error fail:failureBlock];
-                        
-                        //代理
-                        if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
-                            [object.delegate requestdidFailWithError:error];
-                        }
-                        //方法
-                        [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
-                        
-                        
-                        if ([self isDebug]) {
-                            [self logWithFailError:error url:absolute params:params];
-                        }
-                        if (showView != nil) {
-                            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                        }
+                if (response) {
+                    if (successBlock) {//block返回数据
+                        [self successResponse:response callback:successBlock];
                     }
+                    
+                    if (delegate) {//代理
+                        if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
+                            [object.delegate requestDidFinishLoading:[self tryToParseData:response]];
+                        };
+                    }
+                    //方法
+                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
+                    
+                    if ([self isDebug]) {
+                        [self logWithSuccessResponse:response url:absolute params:params];
+                    }
+                    if (showView) {
+                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+                    }
+                    
                 } else {
+                    
                     //block
                     [self handleCallbackWithError:error fail:failureBlock];
                     
@@ -851,23 +807,125 @@ static inline NSString *cachePath() {
                     if ([self isDebug]) {
                         [self logWithFailError:error url:absolute params:params];
                     }
-                    
-                    if (showView != nil) {
+                    if (showView) {
                         [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
                 }
+            } else {
+                //block
+                [self handleCallbackWithError:error fail:failureBlock];
                 
-                //还原初始值
-                [GDHNetworkingObject huanyuanchushizhi];
-            }];
-        }
+                //代理
+                if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
+                    [object.delegate requestdidFailWithError:error];
+                }
+                //方法
+                [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
+                
+                if ([self isDebug]) {
+                    [self logWithFailError:error url:absolute params:params];
+                }
+                
+                if (showView) {
+                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+                }
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi];
+        }];
+        
     }else if (networkType == GDHNetWorkTypePOST){//POST请求
-        if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown) {// 获取缓存 ===> 没有网
-            if (refreshCache) {//===>获取缓存数据
+        if (sg_cachePost) {
+            if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown) {// 获取缓存 ===> 没有网
+                id response = [GDHNetworkingObject cahceResponseWithURL:absolute parameters:params];
+
+                if (refreshCache && response) {//===>获取缓存数据
+                    if (successBlock) {//block返回数据
+                        [self successResponse:response callback:successBlock];
+                    }
+                    
+                    if (delegate) {//代理
+                        if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
+                            [object.delegate requestDidFinishLoading:[self tryToParseData:response]];
+                        };
+                    }
+                    
+                    //方法
+                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
+                    
+                    if ([self isDebug]) {
+                        [self logWithSuccessResponse:response url:absolute params:params];
+                    }
+                    
+                    if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:true];
+                    
+                    //还原初始值
+                    [GDHNetworkingObject huanyuanchushizhi];
+                    
+                    return nil;
+
+                }else{
+                    if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:true];
+                    if (failureBlock) failureBlock(nil);
+                    SHOW_ALERT(@"网络连接断开,请检查网络!");
+                    //还原初始值
+                    [GDHNetworkingObject huanyuanchushizhi];
+                    return nil;
+                }
+            }
+        }
+        
+        session = [manager POST:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
+            if (progress) {
+                progress(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount,downloadProgress.totalUnitCount-downloadProgress.completedUnitCount);
+            }
+        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            if (successBlock) {//block返回数据
+                [self successResponse:responseObject callback:successBlock];
+            }
+            
+            if (delegate) {//代理
+                if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
+                    [object.delegate requestDidFinishLoading:[self tryToParseData:responseObject]];
+                };
+            }
+            
+            //方法
+            [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:responseObject] withObject:nil];
+            
+            if ([self isDebug]) {
+                [self logWithSuccessResponse:responseObject
+                                         url:absolute
+                                      params:params];
+            }
+            
+            if (sg_cachePost) {
+                [self cacheResponseObject:responseObject request:absolute  parameters:params];
+            }
+            
+            [[self allTasks] removeObject:task];
+            
+            if ([self isDebug]) {
+                [self logWithSuccessResponse:responseObject
+                                         url:absolute
+                                      params:params];
+            }
+            
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi];
+            
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            [[self allTasks] removeObject:task];
+            
+            if ([error code] < 0 && refreshCache) {// 获取缓存
                 id response = [GDHNetworkingObject cahceResponseWithURL:absolute
                                                              parameters:params];
+                
                 if (response) {
-                    
                     if (successBlock) {//block返回数据
                         [self successResponse:response callback:successBlock];
                     }
@@ -891,148 +949,45 @@ static inline NSString *cachePath() {
                         [MBProgressHUD hideAllHUDsForView:showView animated:YES];
                     }
                     
-                    //还原初始值
-                    [GDHNetworkingObject huanyuanchushizhi];
-                    
-                    return nil;
-                }else{
-                    if (showView != nil) {
-                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                    }
-                    SHOW_ALERT(@"网络连接断开,请检查网络!");
-                    if (failureBlock) {
-                        failureBlock(nil);
-                    }
-                    //还原初始值
-                    [GDHNetworkingObject huanyuanchushizhi];
-                    return nil;
-                }
-            }else{//=========>不获取
-                if (showView != nil) {
-                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                }
-                SHOW_ALERT(@"网络连接断开,请检查网络!");
-                if (failureBlock) {
-                    failureBlock(nil);
-                }
-                //还原初始值
-                [GDHNetworkingObject huanyuanchushizhi];
-                return nil;
-            }
-        }else{//有网
-            session = [manager POST:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
-                if (progress) {
-                    progress(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount,downloadProgress.totalUnitCount-downloadProgress.completedUnitCount);
-                }
-            } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                if (successBlock) {//block返回数据
-                    [self successResponse:responseObject callback:successBlock];
-                }
-                
-                if (delegate) {//代理
-                    if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
-                        [object.delegate requestDidFinishLoading:[self tryToParseData:responseObject]];
-                    };
-                }
-                
-                //方法
-                [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:responseObject] withObject:nil];
-                
-                if ([self isDebug]) {
-                    [self logWithSuccessResponse:responseObject
-                                             url:absolute
-                                          params:params];
-                }
-                
-                if (sg_cachePost) {
-                    [self cacheResponseObject:responseObject request:absolute  parameters:params];
-                }
-                
-                [[self allTasks] removeObject:task];
-                
-                if ([self isDebug]) {
-                    [self logWithSuccessResponse:responseObject
-                                             url:absolute
-                                          params:params];
-                }
-                
-                if (showView != nil) {
-                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                }
-                
-                //还原初始值
-                [GDHNetworkingObject huanyuanchushizhi];
-                
-            } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                [[self allTasks] removeObject:task];
-                
-                if ([error code] < 0 && refreshCache) {// 获取缓存
-                    id response = [GDHNetworkingObject cahceResponseWithURL:absolute
-                                                                 parameters:params];
-                    
-                    if (response) {
-                        if (successBlock) {//block返回数据
-                            [self successResponse:response callback:successBlock];
-                        }
-                        
-                        if (delegate) {//代理
-                            if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
-                                [object.delegate requestDidFinishLoading:[self tryToParseData:response]];
-                            };
-                        }
-                        
-                        //方法
-                        [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
-                        
-                        if ([self isDebug]) {
-                            [self logWithSuccessResponse:response
-                                                     url:absolute
-                                                  params:params];
-                        }
-                        
-                        if (showView != nil) {
-                            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                        }
-                        
-                    } else {
-                        [self handleCallbackWithError:error fail:failureBlock];
-                        //代理
-                        if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
-                            [object.delegate requestdidFailWithError:error];
-                        }
-                        //方法
-                        [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
-                        if ([self isDebug]) {
-                            [self logWithFailError:error url:absolute params:params];
-                        }
-                    }
-                    
-                    if (showView != nil) {
-                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                    }
                 } else {
                     [self handleCallbackWithError:error fail:failureBlock];
-                    
                     //代理
                     if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
                         [object.delegate requestdidFailWithError:error];
                     }
                     //方法
                     [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
-                    
                     if ([self isDebug]) {
                         [self logWithFailError:error url:absolute params:params];
                     }
-                    
-                    if (showView != nil) {
-                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                    }
                 }
                 
-                //还原初始值
-                [GDHNetworkingObject huanyuanchushizhi];
-            }];
-        }
+                if (showView != nil) {
+                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+                }
+            } else {
+                [self handleCallbackWithError:error fail:failureBlock];
+                
+                //代理
+                if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
+                    [object.delegate requestdidFailWithError:error];
+                }
+                //方法
+                [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
+                
+                if ([self isDebug]) {
+                    [self logWithFailError:error url:absolute params:params];
+                }
+                
+                if (showView != nil) {
+                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+                }
+            }
+            
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi];
+        }];
+        
     }
     
     if (session) {

@@ -19,6 +19,39 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    // 通常放在appdelegate就可以了
+    [GDHNetworkingObject updateBaseUrl:@"http://60.205.224.161/user/"];
+    [GDHNetworkingObject enableInterfaceDebug:YES];
+    
+    // 配置请求和响应类型，由于部分伙伴们的服务器不接收JSON传过去，现在默认值改成了plainText
+    [GDHNetworkingObject configRequestType:GDHRequestTypePlainText
+                        responseType:GDHResponseTypeJSON
+                 shouldAutoEncodeUrl:YES
+             callbackOnCancelRequest:NO];
+
+    //设置请求头
+    NSDictionary * headers = @{@"token":@"3780e7691c1941f5a6b87dff04cca6fc",};
+    [GDHNetworkingObject configCommonHttpHeaders:headers];
+    // 设置GET、POST请求都缓存
+    [GDHNetworkingObject cacheGetRequest:YES shoulCachePost:YES];
+    //参数
+    NSDictionary * dict = @{@"headUrl":@"/head/2017/6/2/5d0a52a2bd0a4b7d9935213578a82dc2.jpg",
+                            @"nickName":@"麦宠GDH",
+                            @"userType":@(2),};
+    [GDHNetworkingManager postReqeustWithURL:@"api/user/doComplete" params:dict successBlock:^(id returnData) {
+        NSLog(@"%@",returnData);
+    } failureBlock:^(NSError *error) {
+        NSLog(@"%@",error);
+    } progress:nil refreshCache:false showView:self.view];
+    
+    NSDictionary * dict1 = @{@"phone":@"13678890524",
+                            @"password":@"123456",};
+    [GDHNetworkingManager postReqeustWithURL:@"api/login" params:dict1 successBlock:^(id returnData) {
+        NSLog(@"%@",returnData);
+    } failureBlock:^(NSError *error) {
+        NSLog(@"%@",error);
+    } progress:nil refreshCache:false showView:self.view];
 }
 /**block回调数据*/
 - (IBAction)blockBtnAct:(id)sender {
