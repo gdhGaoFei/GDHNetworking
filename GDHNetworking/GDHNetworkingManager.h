@@ -103,6 +103,10 @@ typedef void(^GDHResponseFail)(NSError * error);
 
 
 
+//上传照片时使用的Block
+typedef void(^SuccessImagesBlock)(id returnData, NSArray <UIImage *>*);
+typedef void(^FailureImagesBlock)(NSArray <UIImage *>*, NSArray <NSError *>*);
+
 #pragma mark - ========  代理  ================
 @protocol GDHNetworkDelegate <NSObject>//请求封装的代理协议
 
@@ -321,16 +325,43 @@ typedef void(^GDHResponseFail)(NSError * error);
  *	@param fail		    上传失败回调
  *
  */
-+ (GDHURLSessionTask *)uploadWithImage:(UIImage *)image
-                                   url:(NSString *)url
-                              filename:(NSString *)filename
-                                  name:(NSString *)name
-                              mimeType:(NSString *)mimeType
-                            parameters:(NSDictionary *)parameters
-                              showView:(UIView *)showView
-                              progress:(GDHUploadProgress)progress
-                               success:(GDHResponseSuccess)success
-                                  fail:(GDHResponseFail)fail;
++ (void)uploadWithImage:(UIImage *)image
+                    url:(NSString *)url
+               filename:(NSString *)filename
+                   name:(NSString *)name
+               mimeType:(NSString *)mimeType
+             parameters:(NSDictionary *)parameters
+               showView:(UIView *)showView
+               progress:(GDHUploadProgress)progress
+                success:(SuccessImagesBlock)success
+                   fail:(FailureImagesBlock)fail;
+
+/**
+ *
+ *	图片上传接口，若不指定baseurl，可传完整的url
+ *
+ *	@param images			图片对象数组
+ *	@param url				上传图片的接口路径，如/path/images/
+ *	@param filename		给图片起一个名字，默认为当前日期时间,格式为"yyyyMMddHHmmss"，后缀为`jpg`
+ *	@param name				与指定的图片相关联的名称，这是由后端写接口的人指定的，如imagefiles
+ *	@param mimeType		默认为image/jpeg
+ *	@param parameters	参数
+ *	@param progress		上传进度
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
+ *	@param success		上传成功回调
+ *	@param fail		    上传失败回调
+ *
+ */
++ (void)uploadWithImages:(NSArray <UIImage *>*)images
+                     url:(NSString *)url
+                filename:(NSString *)filename
+                    name:(NSString *)name
+                mimeType:(NSString *)mimeType
+              parameters:(NSDictionary *)parameters
+                showView:(UIView *)showView
+                progress:(GDHUploadProgress)progress
+                 success:(SuccessImagesBlock)success
+                    fail:(FailureImagesBlock)fail;
 
 /**
  *

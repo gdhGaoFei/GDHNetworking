@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
 
   s.name         = "GDHNetworking"
-  s.version      = "1.0.4"
+  s.version      = "1.0.5"
   s.summary      = "GDHNetworking is a high level request util based on AFNetworking."
   s.homepage     = "https://github.com/gdhGaoFei/GDHNetworking"
   s.license      = "MIT"
-  s.author       = { "_GaoFei" => "gdhgaofei@163.com" }
+  s.author       = { "高得华" => "gdhgaofei@163.com" }
   s.source        = { :git => "https://github.com/gdhGaoFei/GDHNetworking.git", :tag => s.version.to_s }
   s.source_files  = "GDHNetworking", "*.{h,m}"
   s.requires_arc  = true

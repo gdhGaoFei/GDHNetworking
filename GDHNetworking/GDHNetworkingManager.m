@@ -1350,7 +1350,7 @@ static inline NSString *cachePath() {
  *	@param fail		    上传失败回调
  *
  */
-+ (GDHURLSessionTask *)uploadWithImage:(UIImage *)image
++ (void)uploadWithImage:(UIImage *)image
                                    url:(NSString *)url
                               filename:(NSString *)filename
                                   name:(NSString *)name
@@ -1358,17 +1358,57 @@ static inline NSString *cachePath() {
                             parameters:(NSDictionary *)parameters
                               showView:(UIView *)showView
                               progress:(GDHUploadProgress)progress
-                               success:(GDHResponseSuccess)success
-                                  fail:(GDHResponseFail)fail{
+                               success:(SuccessImagesBlock)success
+                                  fail:(FailureImagesBlock)fail {
+    [GDHNetworkingObject uploadWithImages:@[image] url:url filename:filename name:name mimeType:mimeType parameters:parameters showView:showView progress:progress success:success fail:fail];
+}
+
+
+/**
+ *
+ *	图片上传接口，若不指定baseurl，可传完整的url
+ *
+ *	@param images			图片对象数组
+ *	@param url				上传图片的接口路径，如/path/images/
+ *	@param filename		给图片起一个名字，默认为当前日期时间,格式为"yyyyMMddHHmmss"，后缀为`jpg`
+ *	@param name				与指定的图片相关联的名称，这是由后端写接口的人指定的，如imagefiles
+ *	@param mimeType		默认为image/jpeg
+ *	@param parameters	参数
+ *	@param progress		上传进度
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
+ *	@param success		上传成功回调
+ *	@param fail		    上传失败回调
+ *
+ */
++ (void)uploadWithImages:(NSArray <UIImage *>*)images
+                     url:(NSString *)url
+                filename:(NSString *)filename
+                    name:(NSString *)name
+                mimeType:(NSString *)mimeType
+              parameters:(NSDictionary *)parameters
+                showView:(UIView *)showView
+                progress:(GDHUploadProgress)progress
+                 success:(SuccessImagesBlock)success
+                    fail:(FailureImagesBlock)fail {
+    
+    // 准备保存结果的数组，元素个数与上传的图片个数相同，先用 NSNull 占位
+    NSMutableArray * result      = [NSMutableArray array];
+    NSMutableArray * errorresult = [NSMutableArray array];
+    NSMutableArray * errorimage  = [NSMutableArray arrayWithArray:images];
+    
+    for (NSInteger i = 0; i < images.count; i++) {
+        [result addObject:[NSNull null]];
+        [errorresult addObject:[NSNull null]];
+    }
     
     if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown ) {
         SHOW_ALERT(@"网络连接断开,请检查网络!");
         if (fail) {
-            fail(nil);
+            fail(errorimage, errorresult);
         }
         //还原初始值
         [GDHNetworkingObject huanyuanchushizhi];
-        return nil;
+        return ;
     }
     
     if (showView) {
@@ -1384,11 +1424,11 @@ static inline NSString *cachePath() {
                 [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             if (fail) {
-                fail(nil);
+                fail(errorimage, errorresult);
             }
             //还原初始值
             [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
+            return;
         }
     } else {
         if ([NSURL URLWithString:[NSString stringWithFormat:@"%@%@", [self baseUrl], url]] == nil) {
@@ -1397,11 +1437,11 @@ static inline NSString *cachePath() {
                 [MBProgressHUD hideAllHUDsForView:showView animated:YES];
             }
             if (fail) {
-                fail(nil);
+                fail(errorimage, errorresult);
             }
             //还原初始值
             [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
+            return;
         }
     }
     
@@ -1412,64 +1452,98 @@ static inline NSString *cachePath() {
     NSString *absolute = [self absoluteUrlWithPath:url];
     
     AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
-    GDHURLSessionTask *session = [manager POST:url parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        NSData *imageData = UIImageJPEGRepresentation(image, 1);
-        
-        NSString *imageFileName = filename;
-        if (filename == nil || ![filename isKindOfClass:[NSString class]] || filename.length == 0) {
-            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-            formatter.dateFormat = @"yyyyMMddHHmmss";
-            NSString *str = [formatter stringFromDate:[NSDate date]];
-            imageFileName = [NSString stringWithFormat:@"%@.jpg", str];
-        }
-        
-        // 上传图片，以文件流的格式
-        [formData appendPartWithFileData:imageData name:name fileName:imageFileName mimeType:mimeType];
-    } progress:^(NSProgress * _Nonnull uploadProgress) {
-        if (progress) {
-            progress(uploadProgress.completedUnitCount, uploadProgress.totalUnitCount);
-        }
-        [GDHNetworkingObject sharedInstance].hud.progress = (CGFloat)(uploadProgress.completedUnitCount) / (CGFloat)uploadProgress.totalUnitCount;
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [[self allTasks] removeObject:task];
-        [self successResponse:responseObject callback:success];
-        
-        if ([self isDebug]) {
-            [self logWithSuccessResponse:responseObject
-                                     url:absolute
-                                  params:parameters];
-        }
-        
-        if (showView != nil) {
-            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-        }
-        //还原初始值
-        [GDHNetworkingObject huanyuanchushizhi];
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [[self allTasks] removeObject:task];
-        
-        [self handleCallbackWithError:error fail:fail];
-        
-        if ([self isDebug]) {
-            [self logWithFailError:error url:absolute params:nil];
-        }
-        
-        if (showView != nil) {
-            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-        }
-        if (fail) {
-            fail(nil);
-        }
-        //还原初始值
-        [GDHNetworkingObject huanyuanchushizhi];
-    }];
     
-    [session resume];
-    if (session) {
-        [[self allTasks] addObject:session];
+    dispatch_group_t group = dispatch_group_create();
+    for (NSInteger i = 0; i < images.count; i++) {
+        dispatch_group_enter(group);
+        UIImage * image = images[i];
+        
+        GDHURLSessionTask *session = [manager POST:url parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+            
+            NSData *imageData = UIImageJPEGRepresentation(image, 1);
+            NSString *imageFileName = filename;
+            if (filename == nil || ![filename isKindOfClass:[NSString class]] || filename.length == 0) {
+                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                formatter.dateFormat = @"yyyyMMddHHmmss";
+                NSString *str = [formatter stringFromDate:[NSDate date]];
+                imageFileName = [NSString stringWithFormat:@"%@.jpg", str];
+            }
+            
+            // 上传图片，以文件流的格式
+            [formData appendPartWithFileData:imageData name:name fileName:imageFileName mimeType:mimeType];
+        } progress:^(NSProgress * _Nonnull uploadProgress) {
+            if (images.count == 1) {
+                if (progress) {
+                    progress(uploadProgress.completedUnitCount, uploadProgress.totalUnitCount);
+                }
+                [GDHNetworkingObject sharedInstance].hud.progress = (CGFloat)(uploadProgress.completedUnitCount) / (CGFloat)uploadProgress.totalUnitCount;
+            }else{
+                CGFloat pro = (CGFloat)uploadProgress.completedUnitCount/uploadProgress.totalUnitCount;
+                DTLog(@"%lf",pro);
+            }
+        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            
+            /*
+            //====== 这是准确的做法 以下==========
+            NSDictionary * dict = (NSDictionary *)responseObject;
+            if ([dict[@"status"] integerValue] == 200) {
+                DTLog(@"第 %d 张图片上传成功: %@", (int)i + 1, responseObject);
+                @synchronized (result) { // NSMutableArray 是线程不安全的，所以加个同步锁
+                    result[i] = responseObject;
+                }
+                @synchronized (errorimage) { // NSMutableArray 是线程不安全的，所以加个同步锁
+                    [errorimage removeObject:images[i]];
+                }
+            }
+            //====== 这是准确的做法 以上==========
+            */
+            
+            //====== 这是通用的做法 以下==== 不算太准确 ======
+            
+            DTLog(@"第 %d 张图片上传成功: %@", (int)i + 1, responseObject);
+            @synchronized (result) { // NSMutableArray 是线程不安全的，所以加个同步锁
+                result[i] = responseObject;
+            }
+            @synchronized (errorimage) { // NSMutableArray 是线程不安全的，所以加个同步锁
+                [errorimage removeObject:images[i]];
+            }
+            
+            //====== 这是通用的做法 以上==== 不算太准确 ======
+
+            
+            dispatch_group_leave(group);
+            [[self allTasks] removeObject:task];
+            if ([self isDebug]) [self logWithSuccessResponse:responseObject url:absolute params:parameters];
+            if (showView != nil) [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi];
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            @synchronized (errorresult) { // NSMutableArray 是线程不安全的，所以加个同步锁
+                if (error) errorresult[i] = error;
+            }
+            DTLog(@"第 %d 张图片上传失败: %@", (int)i + 1, error);
+            dispatch_group_leave(group);
+            
+            [[self allTasks] removeObject:task];
+            if ([self isDebug]) [self logWithFailError:error url:absolute params:nil];
+            if (showView != nil) [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi];
+        }];
+        
+        [session resume];
+        if (session) [[self allTasks] addObject:session];
     }
     
-    return session;
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        DTLog(@"上传完成!");
+        if (success) {
+            success(result, errorimage);
+        }
+        if (fail) {
+            fail(errorimage, errorresult);
+        }
+    });
 }
 
 /**

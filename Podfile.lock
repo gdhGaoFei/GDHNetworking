@@ -18,15 +18,15 @@ PODS:
   - XMLDictionary (1.4.1)
 
 DEPENDENCIES:
-  - AFNetworking
+  - AFNetworking (~> 3.1.0)
   - MBProgressHUD (~> 0.9.2)
-  - XMLDictionary
+  - XMLDictionary (~> 1.4.1)
 
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   XMLDictionary: fa07b6ff422b3a91d47a5de9bc82e3fc04fbd167
 
-PODFILE CHECKSUM: 996016928023c32dff3f40426c071cd400bfc32b
+PODFILE CHECKSUM: c545028ae8cc80fb32238d65363cf8eefccc1137
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.2.0

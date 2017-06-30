@@ -31,27 +31,37 @@
              callbackOnCancelRequest:NO];
 
     //设置请求头
-    NSDictionary * headers = @{@"token":@"3780e7691c1941f5a6b87dff04cca6fc",};
+    NSDictionary * headers = @{@"token":@"a1f115d0ca9544e4b95b0f7bcc74f5b8",};
     [GDHNetworkingObject configCommonHttpHeaders:headers];
     // 设置GET、POST请求都缓存
     [GDHNetworkingObject cacheGetRequest:YES shoulCachePost:YES];
     //参数
-    NSDictionary * dict = @{@"headUrl":@"/head/2017/6/2/5d0a52a2bd0a4b7d9935213578a82dc2.jpg",
-                            @"nickName":@"麦宠GDH",
-                            @"userType":@(2),};
-    [GDHNetworkingManager postReqeustWithURL:@"api/user/doComplete" params:dict successBlock:^(id returnData) {
-        NSLog(@"%@",returnData);
-    } failureBlock:^(NSError *error) {
-        NSLog(@"%@",error);
-    } progress:nil refreshCache:false showView:self.view];
     
-    NSDictionary * dict1 = @{@"phone":@"13678890524",
-                            @"password":@"123456",};
-    [GDHNetworkingManager postReqeustWithURL:@"api/login" params:dict1 successBlock:^(id returnData) {
-        NSLog(@"%@",returnData);
-    } failureBlock:^(NSError *error) {
-        NSLog(@"%@",error);
-    } progress:nil refreshCache:false showView:self.view];
+    
+    NSMutableArray <UIImage *>* images = [NSMutableArray new];
+    for (int i = 0; i<10; i++) {
+        NSData *imageData = UIImageJPEGRepresentation([UIImage imageNamed:@"loading_iOS"], 0.000001);
+        [images addObject:[UIImage imageWithData:imageData]];
+    }
+    
+#warning 返回的数据 returnData 是一个数组集合 将每张照片的信息包含在了这个数组中  会有一个问题 当上传的照片中有返回值不是200的情况 errorImages中也不会有这张照片 所以需要在里面进行设置，已经提供准确的方法啦。请进入查看。
+    
+    
+    [GDHNetworkingObject uploadWithImages:images url:@"api/deal/uploadImage" filename:@"" name:@"uploadfile" mimeType:@"image/png" parameters:nil showView:nil progress:^(int64_t bytesWritten, int64_t totalBytesWritten) {
+        //totalBytesExpectedToRead总字节数
+        //bytesRead 读取的字节数
+        CGFloat pro = (CGFloat)bytesWritten/totalBytesWritten;
+        DTLog(@"%lf",pro);
+    } success:^(id returnData, NSArray<UIImage *> * errorImages) {
+        for (id dict in returnData) {
+            DTLog(@"%@<+++++++",dict);
+        }
+        DTLog(@"成功了%ld<=====>失败了%ld<======",images.count, errorImages.count);
+    } fail:^(NSArray<UIImage *> *errorImages, NSArray<NSError *> * errorErrors) {
+        for (NSError * error in errorErrors) {
+            DTLog(@"%@<=error======",error);
+        }
+    }];
 }
 /**block回调数据*/
 - (IBAction)blockBtnAct:(id)sender {
