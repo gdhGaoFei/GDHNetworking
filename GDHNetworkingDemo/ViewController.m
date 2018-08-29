@@ -44,23 +44,15 @@
         [images addObject:[UIImage imageWithData:imageData]];
     }
     
-#warning 返回的数据 returnData 是一个数组集合 将每张照片的信息包含在了这个数组中  会有一个问题 当上传的照片中有返回值不是200的情况 errorImages中也不会有这张照片 所以需要在里面进行设置，已经提供准确的方法啦。请进入查看。
-    
-    
-    [GDHNetworkingObject uploadWithImages:images url:@"api/deal/uploadImage" filename:@"" name:@"uploadfile" mimeType:@"image/png" parameters:nil showView:nil progress:^(int64_t bytesWritten, int64_t totalBytesWritten) {
+    [GDHNetworkingObject uploadImageWithUrl:@"api/deal/uploadImage" photos:images name:@"uploadfile" mimeType:@"image/png" params:nil showView:nil progress:^(int64_t bytesRead, int64_t totalBytesRead, int64_t totalBytesExpectedToRead) {
         //totalBytesExpectedToRead总字节数
         //bytesRead 读取的字节数
-        CGFloat pro = (CGFloat)bytesWritten/totalBytesWritten;
+        CGFloat pro = (CGFloat)bytesRead/totalBytesRead;
         DTLog(@"%lf",pro);
-    } success:^(id returnData, NSArray<UIImage *> * errorImages) {
-        for (id dict in returnData) {
-            DTLog(@"%@<+++++++",dict);
-        }
-        DTLog(@"成功了%ld<=====>失败了%ld<======",images.count, errorImages.count);
-    } fail:^(NSArray<UIImage *> *errorImages, NSArray<NSError *> * errorErrors) {
-        for (NSError * error in errorErrors) {
-            DTLog(@"%@<=error======",error);
-        }
+    } success:^(id returnData) {
+        DTLog(@"%@<=returnData======",returnData);
+    } failure:^(NSError *error) {
+        DTLog(@"%@<=error======",error);
     }];
 }
 /**block回调数据*/

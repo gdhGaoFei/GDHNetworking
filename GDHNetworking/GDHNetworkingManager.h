@@ -18,7 +18,7 @@
 #pragma mark - ==== 宏定义 =======
 // 项目打包上线都不会打印日志，因此可放心。
 #ifdef DEBUG
-#define DTLog(s, ... ) NSLog( @"[%@ in line %d] ===============>%@", [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
+#define DTLog(s, ... ) NSLog( @"[%@ in line %d] =====%@=====>%@", [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithUTF8String:object_getClassName(self)], [NSString stringWithFormat:(s), ##__VA_ARGS__] )//NSLog( @"[%@ in line %d] ===============>%@", [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
 #else
 #define DTLog(s, ... )
 #endif
@@ -105,7 +105,7 @@ typedef void(^GDHResponseFail)(NSError * error);
 
 //上传照片时使用的Block
 typedef void(^SuccessImagesBlock)(id returnData, NSArray <UIImage *>*);
-typedef void(^FailureImagesBlock)(NSArray <UIImage *>*, NSArray <NSError *>*);
+typedef void(^FailureImagesBlock)(NSArray <UIImage *>*, NSArray *);
 
 #pragma mark - ========  代理  ================
 @protocol GDHNetworkDelegate <NSObject>//请求封装的代理协议
@@ -334,7 +334,7 @@ typedef void(^FailureImagesBlock)(NSArray <UIImage *>*, NSArray <NSError *>*);
                showView:(UIView *)showView
                progress:(GDHUploadProgress)progress
                 success:(SuccessImagesBlock)success
-                   fail:(FailureImagesBlock)fail;
+                   fail:(FailureImagesBlock)fail DEPRECATED_MSG_ATTRIBUTE("use uploadImageWithUrl:photos:name:mimeType:params: instead");
 
 /**
  *
@@ -361,7 +361,7 @@ typedef void(^FailureImagesBlock)(NSArray <UIImage *>*, NSArray <NSError *>*);
                 showView:(UIView *)showView
                 progress:(GDHUploadProgress)progress
                  success:(SuccessImagesBlock)success
-                    fail:(FailureImagesBlock)fail;
+                    fail:(FailureImagesBlock)fail DEPRECATED_MSG_ATTRIBUTE("use uploadImageWithUrl:photos:name:mimeType:params: instead");//
 
 /**
  *
@@ -541,6 +541,52 @@ typedef void(^FailureImagesBlock)(NSArray <UIImage *>*, NSArray <NSError *>*);
  *	@param url				URL，可以是绝对URL，也可以是path（也就是不包括baseurl）
  */
 + (void)cancelRequestWithURL:(NSString *)url;
+
+
+
+///MARK: - ======= 附加上传数据类 ===== -
+///上传语音接口
++ (GDHURLSessionTask *)upDataUrl:(NSString *)url
+                          params:(NSDictionary *)params
+                        filePath:(NSString *)path
+                        showView:(UIView *)showView
+                        progress:(GDHDownloadProgress)progress
+                    successBlock:(GDHResponseSuccess)successBlock
+                    failureBlock:(GDHResponseFail)failureBlock;
+
+///上传视频接口
++ (GDHURLSessionTask *)upDataUrl:(NSString *)url
+                          params:(NSDictionary *)params
+                        filePath:(NSString *)path
+                            name:(NSString *)name
+                        showView:(UIView *)showView
+                        progress:(GDHDownloadProgress)progress
+                    successBlock:(GDHResponseSuccess)successBlock
+                    failureBlock:(GDHResponseFail)failureBlock;
+
+////上传多张图片
++ (GDHURLSessionTask *)uploadImageWithUrl:(NSString *)url
+                                   photos:(NSArray *)photos
+                                     name:(NSString *)name
+                                 mimeType:(NSString *)mimeType
+                                   params:(NSDictionary *)params
+                                 showView:(UIView *)showView
+                                 progress:(GDHDownloadProgress)progress
+                                  success:(GDHResponseSuccess)successBlock
+                                  failure:(GDHResponseFail)failureBlock;
+
+///上传视频 和 图片 共存
++ (GDHURLSessionTask *)uploadImageVideoWithUrl:(NSString *)url
+                                        photos:(NSArray *)photos
+                                          name:(NSString *)name
+                                      mimeType:(NSString *)mimeType
+                                 fileVideoPath:(NSString *)videoPath
+                                     videoName:(NSString *)videoName
+                                        params:(NSDictionary *)params
+                                      showView:(UIView *)showView
+                                      progress:(GDHDownloadProgress)progress
+                                       success:(GDHResponseSuccess)successBlock
+                                       failure:(GDHResponseFail)failureBlock;
 
 
 @end
