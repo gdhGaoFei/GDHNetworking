@@ -20,6 +20,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
+    
     // 通常放在appdelegate就可以了
     [GDHNetworkingObject updateBaseUrl:@"http://60.205.224.161/user/"];
     [GDHNetworkingObject enableInterfaceDebug:YES];
