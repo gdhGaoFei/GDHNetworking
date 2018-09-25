@@ -334,7 +334,7 @@ typedef void(^FailureImagesBlock)(NSArray <UIImage *>*, NSArray *);
                showView:(UIView *)showView
                progress:(GDHUploadProgress)progress
                 success:(SuccessImagesBlock)success
-                   fail:(FailureImagesBlock)fail DEPRECATED_MSG_ATTRIBUTE("use uploadImageWithUrl:photos:name:mimeType:params: instead");
+                   fail:(FailureImagesBlock)fail;
 
 /**
  *
@@ -361,7 +361,7 @@ typedef void(^FailureImagesBlock)(NSArray <UIImage *>*, NSArray *);
                 showView:(UIView *)showView
                 progress:(GDHUploadProgress)progress
                  success:(SuccessImagesBlock)success
-                    fail:(FailureImagesBlock)fail DEPRECATED_MSG_ATTRIBUTE("use uploadImageWithUrl:photos:name:mimeType:params: instead");//
+                    fail:(FailureImagesBlock)fail;
 
 /**
  *

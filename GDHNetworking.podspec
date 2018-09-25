@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "GDHNetworking"
-  s.version      = "2.0.0"
+  s.version      = "3.0.0"
   s.summary      = "GDHNetworking is a high level request util based on AFNetworking."
   s.homepage     = "https://github.com/gdhGaoFei/GDHNetworking"
   s.license      = "MIT"

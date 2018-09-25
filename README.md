@@ -1,4 +1,9 @@
 # GDHNetworking
+
+现在版本为3.0.0版本 ——请更换成3.0.0版本
+此次版本将 AFN的AFHTTPSessionManager设置成单例的模式进行请求网络，有效的避免 内存泄漏。并且进行代码的优化。。。下一步将要继续优化代码。
+
+
 GDHNetworking is is a high level request util based on AFNetworking 
 
 此网络二次开发是基于AFNetworking3.0以上版本封装的网络层。

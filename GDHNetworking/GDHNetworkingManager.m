@@ -17,7 +17,6 @@
 @interface NSString (md5)
 + (NSString *)hybnetworking_md5:(NSString *)string;
 @end
-
 @implementation NSString (md5)
 + (NSString *)hybnetworking_md5:(NSString *)string {
     if (string == nil || [string length] == 0) {
@@ -35,15 +34,10 @@
 
 @end
 
-
-
-#pragma mark  ============  网络请求请求管理着 =============
+#pragma marlk  ============  网络请求请求管理着 =============
 @interface GDHNetworkingManager ()
-
 @end
-
 @implementation GDHNetworkingManager
-
 #pragma mark - GET 请求的三种回调方法
 /**
  *   GET请求的公共方法 一下三种方法都调用这个方法 根据传入的不同参数觉得回调的方式
@@ -136,7 +130,6 @@
 }
 
 #pragma mark - 发送 POST 请求的方法
-
 /**
  *   发送一个 POST请求的公共方法 传入不同的回调参数决定回调的方式
  *
@@ -227,27 +220,7 @@
 
 
 
-
-
-
-
-#pragma mark ============ 网络请求的基类 =================
-@interface GDHNetworkingObject ()<MBProgressHUDDelegate>
-
-/**当前网络是否可以使用**/
-@property (nonatomic, assign) BOOL networkError;
-/**!
- * 菊花展示  展示只支持 MBProgressHUD
- */
-@property (nonatomic, strong) MBProgressHUD * hud;
-
-/**请求数据**/
-@property (nonatomic, assign) GDHRequestType requestType;
-/**响应数据**/
-@property (nonatomic, assign) GDHResponseType responseType;
-
-@end
-
+#pragma mark - ===== 静态变量 ===== -
 //=========== 静态变量
 static NSString * sg_privateNetworkBaseUrl     = nil;//baseURL
 static NSString * sg_baseCacheDocuments        = @"GDHNetworkCaches";//默认的缓存路径
@@ -271,20 +244,44 @@ static GDHRequestType  sg_requestType_first    = GDHRequestTypePlainText;//请�
 static BOOL sg_requestType_complete            = NO;//请求数据的默认类型
 static BOOL sg_responseType_complete           = NO;//响应数据默认类型
 
+#pragma mark ============ 网络请求的基类 =================
+@interface GDHNetworkingObject ()<MBProgressHUDDelegate>
+
+///当前网络是否可以使用
+@property (nonatomic, assign) BOOL networkError;
+///菊花展示  展示只支持 MBProgressHUD
+@property (nonatomic, strong) MBProgressHUD * hud;
+///请求数据
+@property (nonatomic, assign) GDHRequestType requestType;
+///响应数据
+@property (nonatomic, assign) GDHResponseType responseType;
+
+@end
+
 @implementation GDHNetworkingObject
 
+
+static GDHNetworkingObject * handler = nil;
 /**
  *  单例
  *
  *  @return GDHNetworkObject的单例对象
  */
-+ (GDHNetworkingObject *)sharedInstance{
-    
-    static GDHNetworkingObject *handler = nil;
++ (GDHNetworkingObject *)sharedInstance {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         handler = [[GDHNetworkingObject alloc] init];
     });
+    return handler;
+}
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        handler = [super allocWithZone:zone];
+    });
+    return handler;
+}
+- (id)copyWithZone:(nullable NSZone *)zone {
     return handler;
 }
 - (instancetype)init
@@ -297,6 +294,7 @@ static BOOL sg_responseType_complete           = NO;//响应数据默认类型
     return self;
 }
 
+#pragma mark - ====== 基础的设置 ===== -
 /*!
  *
  *  用于指定网络请求接口的基础url，如：
@@ -315,7 +313,7 @@ static BOOL sg_responseType_complete           = NO;//响应数据默认类型
     sg_privateNetworkBaseUrl = baseUrl;
 }
 /**返回baseURL*/
-+ (NSString *)baseUrl{
++ (NSString *)baseUrl {
     return sg_privateNetworkBaseUrl;
 }
 
@@ -388,7 +386,7 @@ static BOOL sg_responseType_complete           = NO;//响应数据默认类型
  *
  *	@return 缓存大小
  */
-+ (unsigned long long)totalCacheSize{
++ (unsigned long long)totalCacheSize {
     NSString *directoryPath = cachePath();
     BOOL isDir = NO;
     unsigned long long total = 0;
@@ -401,7 +399,8 @@ static BOOL sg_responseType_complete           = NO;//响应数据默认类型
             if (error == nil) {
                 for (NSString *subpath in array) {
                     NSString *path = [directoryPath stringByAppendingPathComponent:subpath];
-                    NSDictionary *dict = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
+                    NSDictionary *dict = [[NSFileManager defaultManager] attributesOfItemAtPath:path
+                                                                                          error:&error];
                     if (!error) {
                         total += [dict[NSFileSize] unsignedIntegerValue];
                     }
@@ -433,11 +432,12 @@ static BOOL sg_responseType_complete           = NO;//响应数据默认类型
     if ([[NSFileManager defaultManager] fileExistsAtPath:directoryPath isDirectory:nil]) {
         NSError *error = nil;
         [[NSFileManager defaultManager] removeItemAtPath:directoryPath error:&error];
+        
         if (error) {
-            DTLog(@"GDHNetworking clear caches error: %@", error);
+            NSLog(@"GDHNetworking clear caches error: %@", error);
             return NO;
         } else {
-            DTLog(@"GDHNetworking clear caches ok");
+            NSLog(@"GDHNetworking clear caches ok");
             return YES;
         }
     }else{
@@ -543,13 +543,11 @@ static BOOL sg_responseType_complete           = NO;//响应数据默认类型
  *
  *	@param url				URL，可以是绝对URL，也可以是path（也就是不包括baseurl）
  */
-+ (void)cancelRequestWithURL:(NSString *)url{
++ (void)cancelRequestWithURL:(NSString *)url {
     if (url == nil) {
         return;
     }
-    if (![url hasPrefix:@"http"]) {
-        url = [NSString stringWithFormat:@"%@/%@",[[self class] baseUrl],url];
-    }
+    
     @synchronized(self) {
         [[self allTasks] enumerateObjectsUsingBlock:^(GDHURLSessionTask * _Nonnull task, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([task isKindOfClass:[GDHURLSessionTask class]]
@@ -582,7 +580,7 @@ static BOOL sg_responseType_complete           = NO;//响应数据默认类型
         if (status == AFNetworkReachabilityStatusNotReachable){//网络无连接
             sg_networkStatus = GDHNetworkStatusNotReachable;
             [GDHNetworkingObject sharedInstance].networkError = YES;
-            //DTLog(@"网络无连接");
+            //            DTLog(@"网络无连接");
             //SHOW_ALERT(@"网络连接断开,请检查网络!");
             if (statusBlock) {
                 statusBlock (sg_networkStatus);
@@ -590,21 +588,21 @@ static BOOL sg_responseType_complete           = NO;//响应数据默认类型
         } else if (status == AFNetworkReachabilityStatusUnknown){//未知网络
             sg_networkStatus = GDHNetworkStatusUnknown;
             [GDHNetworkingObject sharedInstance].networkError = NO;
-            //DTLog(@"未知网络");
+            //            DTLog(@"未知网络");
             if (statusBlock) {
                 statusBlock (sg_networkStatus);
             }
         } else if (status == AFNetworkReachabilityStatusReachableViaWWAN){//2，3，4G网络
             sg_networkStatus = GDHNetworkStatusReachableViaWWAN;
             [GDHNetworkingObject sharedInstance].networkError = NO;
-            //DTLog(@"2，3，4G网络");
+            //            DTLog(@"2，3，4G网络");
             if (statusBlock) {
                 statusBlock (sg_networkStatus);
             }
         } else if (status == AFNetworkReachabilityStatusReachableViaWiFi){//WIFI网络
             sg_networkStatus = GDHNetworkStatusReachableViaWiFi;
             [GDHNetworkingObject sharedInstance].networkError = NO;
-            //DTLog(@"WIFI网络");
+            //            DTLog(@"WIFI网络");
             if (statusBlock) {
                 statusBlock (sg_networkStatus);
             }
@@ -618,29 +616,45 @@ static inline NSString *cachePath() {
 }
 
 
-
-#pragma mark - Private
+#pragma mark - ===== 网络请求管理者 ===== -
+///使用单例创建 AFHTTPSessionManager
++ (AFHTTPSessionManager *)shareManager {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        ///开启转圈圈
+        [AFNetworkActivityIndicatorManager sharedManager].enabled = true;
+        ///创建请求数据的对象
+        sg_sharedManager = [AFHTTPSessionManager manager];
+        sg_sharedManager.requestSerializer.stringEncoding = NSUTF8StringEncoding;
+        NSArray * reType = @[@"application/json",
+                             @"text/html",
+                             @"text/json",
+                             @"text/plain",
+                             @"text/javascript",
+                             @"text/xml",
+                             @"image/*"];
+        sg_sharedManager.responseSerializer.acceptableContentTypes = [NSSet setWithArray:reType];
+        sg_sharedManager.requestSerializer.timeoutInterval = sg_timeout;
+        // 设置允许同时最大并发数量，过大容易出问题
+        sg_sharedManager.operationQueue.maxConcurrentOperationCount = 3;
+    });
+    return sg_sharedManager;
+}
+///请求数据
 + (AFHTTPSessionManager *)manager {
-    if (sg_sharedManager) {
-        //return sg_sharedManager;
-    }
     @synchronized (self) {
-        
+        GDHNetworkingObject * networkObject = [GDHNetworkingObject sharedInstance];
         // 只要不切换baseurl，就一直使用同一个session manager
         if (sg_sharedManager == nil || sg_isBaseURLChanged) {
-            
-            GDHNetworkingObject * networkObject = [GDHNetworkingObject sharedInstance];
-            // 开启转圈圈
-            [AFNetworkActivityIndicatorManager sharedManager].enabled = YES;
-            AFHTTPSessionManager *manager = nil;
+            AFHTTPSessionManager * manager = [self shareManager];
+            ///设置基础的URL
             NSString * baseurl = [[self class] baseUrl];
-            if (baseurl != nil) {
-                manager = [[AFHTTPSessionManager alloc] initWithBaseURL:[NSURL URLWithString:baseurl]];
-            } else {
-                manager = [AFHTTPSessionManager manager];
+            if (sg_isBaseURLChanged && baseurl.length > 0) {
+                [manager setValue:[NSURL URLWithString:baseurl] forKey:@"baseURL"];
             }
             
-            if (!sg_requestType_complete) {//请求数据
+            ///请求数据
+            if (!sg_requestType_complete) {
                 networkObject.requestType = sg_requestType_first;
             }else{
                 networkObject.requestType = sg_requestType;
@@ -660,12 +674,12 @@ static inline NSString *cachePath() {
                 }
             }
             
-            if (!sg_responseType_complete) {//响应数据
+            ///响应数据
+            if (!sg_responseType_complete) {
                 networkObject.responseType = sg_responseType_first;
             }else{
                 networkObject.responseType = sg_responseType;
             }
-            
             
             switch (networkObject.responseType) {
                 case GDHResponseTypeJSON: {
@@ -684,35 +698,1272 @@ static inline NSString *cachePath() {
                     break;
                 }
             }
-            
-            manager.requestSerializer.stringEncoding = NSUTF8StringEncoding;
-            
-            
-            for (NSString *key in sg_httpHeaders.allKeys) {
-                if (sg_httpHeaders[key] != nil) {
-                    [manager.requestSerializer setValue:sg_httpHeaders[key] forHTTPHeaderField:key];
-                }
-            }
-            
-            manager.responseSerializer.acceptableContentTypes = [NSSet setWithArray:@[@"application/json",
-                                                                                      @"text/html",
-                                                                                      @"text/json",
-                                                                                      @"text/plain",
-                                                                                      @"text/javascript",
-                                                                                      @"text/xml",
-                                                                                      @"image/*"]];
-            
-            manager.requestSerializer.timeoutInterval = sg_timeout;
-            
-            // 设置允许同时最大并发数量，过大容易出问题
-            manager.operationQueue.maxConcurrentOperationCount = 3;
-            sg_sharedManager = manager;
+        }
+    }
+    
+    ///设置请求头
+    for (NSString *key in sg_httpHeaders.allKeys) {
+        if (sg_httpHeaders[key] != nil) {
+            [sg_sharedManager.requestSerializer setValue:sg_httpHeaders[key] forHTTPHeaderField:key];
         }
     }
     
     return sg_sharedManager;
 }
 
+
+
+#pragma mark - ===== 创建一个网络请求项 ===== -
+/**
+ *  创建一个网络请求项
+ *
+ *  @param url          网络请求URL
+ *  @param networkType  网络请求方式
+ *  @param params       网络请求参数
+ *  @param refreshCache 是否获取缓存。无网络或者获取数据失败则获取本地缓存数据
+ *  @param delegate     网络请求的委托，如果没有取消网络请求的需求，可传nil
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
+ *  @param successBlock 请求成功后的block
+ *  @param failureBlock 请求失败后的block
+ *
+ *  @return 根据网络请求的委托delegate而生成的唯一标示
+ */
++ (GDHURLSessionTask *)initWithtype:(GDHNetWorkType)networkType
+                                url:(NSString *)url
+                             params:(NSDictionary *)params
+                       refreshCache:(BOOL)refreshCache
+                           delegate:(id)delegate
+                             target:(id)target
+                             action:(SEL)action
+                          hashValue:(NSUInteger)hashValue
+                           showView:(UIView *)showView
+                           progress:(GDHDownloadProgress)progress
+                       successBlock:(GDHResponseSuccess)successBlock
+                       failureBlock:(GDHResponseFail)failureBlock{
+    
+    GDHNetworkingObject * object = [GDHNetworkingObject sharedInstance];
+    
+    object.delegate = delegate;
+    object.tagrget  = target;
+    object.select   = action;
+
+    if (showView != nil) {
+        [MBProgressHUD showHUDAddedTo:showView animated:YES];
+    }
+    
+    if ([self shouldEncode]) {
+        url = [self encodeUrl:url];
+    }
+    
+    NSString * absolute = [self absoluteUrlWithPath:url];
+
+    if ([self baseUrl] == nil) {
+        if ([NSURL URLWithString:url] == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (failureBlock) {
+                failureBlock(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return nil;
+        }
+    } else {
+        NSURL *absoluteURL = [NSURL URLWithString:absolute];
+        
+        if (absoluteURL == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (failureBlock) {
+                failureBlock(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return nil;
+        }
+    }
+    
+    GDHURLSessionTask * session = nil;
+    AFHTTPSessionManager * manager = [GDHNetworkingObject manager];
+
+    if (networkType == GDHNetWorkTypeGET) {//GET请求
+        if (sg_cacheGet) {//需要获取缓存
+            if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown) {
+                id response = [GDHNetworkingObject cahceResponseWithURL:absolute parameters:params];
+
+                if (refreshCache && response) {//缓存数据中存在
+                    
+                    if (successBlock) {//block返回数据
+                        [self successResponse:response callback:successBlock];
+                    }
+                    
+                    if (delegate) {//代理
+                        if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
+                            [object.delegate requestDidFinishLoading:[self tryToParseData:response]];
+                        };
+                    }
+                    
+                    //方法
+                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
+                    
+                    if ([self isDebug]) {
+                        [self logWithSuccessResponse:response url:absolute params:params];
+                    }
+                    
+                    if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:true];
+                    
+                    //还原初始值
+                    [GDHNetworkingObject huanyuanchushizhi:nil];
+                    return nil;
+                }else{
+                    if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:true];
+                    if (failureBlock) failureBlock(nil);
+                    SHOW_ALERT(@"网络连接断开,请检查网络!");
+                    //还原初始值
+                    [GDHNetworkingObject huanyuanchushizhi:nil];
+                    return nil;
+                }
+            }
+        }
+        
+        session = [manager GET:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
+            if (progress) {
+                progress(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount,downloadProgress.totalUnitCount-downloadProgress.completedUnitCount);
+            }
+        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+
+            //Block
+            if (successBlock) [self successResponse:responseObject callback:successBlock];
+            
+            if (delegate) {//delegate
+                if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
+                    [object.delegate requestDidFinishLoading:[self tryToParseData:responseObject]];
+                };
+            }
+            
+            //方法
+            [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:responseObject] withObject:nil];
+            
+            if (sg_cacheGet) {
+                [self cacheResponseObject:responseObject request:absolute parameters:params];
+            }
+            
+            if ([self isDebug]) {
+                [self logWithSuccessResponse:responseObject url:absolute params:params];
+            }
+            
+            if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:task];
+
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            
+            if ([error code] < 0 && refreshCache) {// 获取缓存
+                id response = [GDHNetworkingObject cahceResponseWithURL:absolute parameters:params];
+                
+                if (response) {
+                    if (successBlock) {//block返回数据
+                        [self successResponse:response callback:successBlock];
+                    }
+                    
+                    if (delegate) {//代理
+                        if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
+                            [object.delegate requestDidFinishLoading:[self tryToParseData:response]];
+                        };
+                    }
+                    //方法
+                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
+                    
+                    if ([self isDebug]) {
+                        [self logWithSuccessResponse:response url:absolute params:params];
+                    }
+                    if (showView) {
+                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+                    }
+                    
+                } else {
+                    
+                    //block
+                    [self handleCallbackWithError:error fail:failureBlock];
+                    
+                    //代理
+                    if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
+                        [object.delegate requestdidFailWithError:error];
+                    }
+                    //方法
+                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
+                    
+                    if ([self isDebug]) {
+                        [self logWithFailError:error url:absolute params:params];
+                    }
+                    if (showView) {
+                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+                    }
+                }
+            } else {
+                //block
+                [self handleCallbackWithError:error fail:failureBlock];
+                
+                //代理
+                if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
+                    [object.delegate requestdidFailWithError:error];
+                }
+                //方法
+                [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
+                
+                if ([self isDebug]) {
+                    [self logWithFailError:error url:absolute params:params];
+                }
+                
+                if (showView) {
+                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+                }
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:task];
+        }];
+        
+    }else if (networkType == GDHNetWorkTypePOST){//POST请求
+        if (sg_cachePost) {
+            if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown) {// 获取缓存 ===> 没有网
+                id response = [GDHNetworkingObject cahceResponseWithURL:absolute parameters:params];
+
+                if (refreshCache && response) {//===>获取缓存数据
+                    if (successBlock) {//block返回数据
+                        [self successResponse:response callback:successBlock];
+                    }
+                    
+                    if (delegate) {//代理
+                        if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
+                            [object.delegate requestDidFinishLoading:[self tryToParseData:response]];
+                        };
+                    }
+                    
+                    //方法
+                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
+                    
+                    if ([self isDebug]) {
+                        [self logWithSuccessResponse:response url:absolute params:params];
+                    }
+                    
+                    if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:true];
+                    
+                    //还原初始值
+                    [GDHNetworkingObject huanyuanchushizhi:nil];
+
+                    return nil;
+                }else{
+                    if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:true];
+                    if (failureBlock) failureBlock(nil);
+                    SHOW_ALERT(@"网络连接断开,请检查网络!");
+                    //还原初始值
+                    [GDHNetworkingObject huanyuanchushizhi:nil];
+                    return nil;
+                }
+            }
+        }
+        
+        session = [manager POST:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
+            if (progress) {
+                progress(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount,downloadProgress.totalUnitCount-downloadProgress.completedUnitCount);
+            }
+        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            if (successBlock) {//block返回数据
+                [self successResponse:responseObject callback:successBlock];
+            }
+            
+            if (delegate) {//代理
+                if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
+                    [object.delegate requestDidFinishLoading:[self tryToParseData:responseObject]];
+                };
+            }
+            
+            //方法
+            [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:responseObject] withObject:nil];
+            
+            if (sg_cachePost) {
+                [self cacheResponseObject:responseObject request:absolute  parameters:params];
+            }
+            
+            if ([self isDebug]) {
+                [self logWithSuccessResponse:responseObject
+                                         url:absolute
+                                      params:params];
+            }
+            
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:task];
+            
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            
+            if ([error code] < 0 && refreshCache) {// 获取缓存
+                id response = [GDHNetworkingObject cahceResponseWithURL:absolute
+                                                             parameters:params];
+                
+                if (response) {
+                    if (successBlock) {//block返回数据
+                        [self successResponse:response callback:successBlock];
+                    }
+                    
+                    if (delegate) {//代理
+                        if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
+                            [object.delegate requestDidFinishLoading:[self tryToParseData:response]];
+                        };
+                    }
+                    
+                    //方法
+                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
+                    
+                    if ([self isDebug]) {
+                        [self logWithSuccessResponse:response
+                                                 url:absolute
+                                              params:params];
+                    }
+                    
+                    if (showView != nil) {
+                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+                    }
+                    
+                } else {
+                    [self handleCallbackWithError:error fail:failureBlock];
+                    //代理
+                    if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
+                        [object.delegate requestdidFailWithError:error];
+                    }
+                    //方法
+                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
+                    if ([self isDebug]) {
+                        [self logWithFailError:error url:absolute params:params];
+                    }
+                }
+                
+                if (showView != nil) {
+                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+                }
+            } else {
+                [self handleCallbackWithError:error fail:failureBlock];
+                
+                //代理
+                if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
+                    [object.delegate requestdidFailWithError:error];
+                }
+                //方法
+                [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
+                
+                if ([self isDebug]) {
+                    [self logWithFailError:error url:absolute params:params];
+                }
+                
+                if (showView != nil) {
+                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+                }
+            }
+            
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:task];
+        }];
+        
+    }
+    
+    if (session) {
+        [[self allTasks] addObject:session];
+    }
+    
+    return session;
+}
+
+/**
+ *
+ *	图片上传接口，若不指定baseurl，可传完整的url
+ *
+ *	@param image			图片对象
+ *	@param url				上传图片的接口路径，如/path/images/
+ *	@param filename		给图片起一个名字，默认为当前日期时间,格式为"yyyyMMddHHmmss"，后缀为`jpg`
+ *	@param name				与指定的图片相关联的名称，这是由后端写接口的人指定的，如imagefiles
+ *	@param mimeType		默认为image/jpeg
+ *	@param parameters	参数
+ *	@param progress		上传进度
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
+ *	@param success		上传成功回调
+ *	@param fail		    上传失败回调
+ *
+ */
++ (void)uploadWithImage:(UIImage *)image
+                                   url:(NSString *)url
+                              filename:(NSString *)filename
+                                  name:(NSString *)name
+                              mimeType:(NSString *)mimeType
+                            parameters:(NSDictionary *)parameters
+                              showView:(UIView *)showView
+                              progress:(GDHUploadProgress)progress
+                               success:(SuccessImagesBlock)success
+                                  fail:(FailureImagesBlock)fail {
+    [GDHNetworkingObject uploadWithImages:@[image] url:url filename:filename name:name mimeType:mimeType parameters:parameters showView:showView progress:progress success:success fail:fail];
+}
+
+
+/**
+ *
+ *	图片上传接口，若不指定baseurl，可传完整的url
+ *
+ *	@param images			图片对象数组
+ *	@param url				上传图片的接口路径，如/path/images/
+ *	@param filename		给图片起一个名字，默认为当前日期时间,格式为"yyyyMMddHHmmss"，后缀为`jpg`
+ *	@param name				与指定的图片相关联的名称，这是由后端写接口的人指定的，如imagefiles
+ *	@param mimeType		默认为image/jpeg
+ *	@param parameters	参数
+ *	@param progress		上传进度
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
+ *	@param success		上传成功回调
+ *	@param fail		    上传失败回调
+ *
+ */
++ (void)uploadWithImages:(NSArray <UIImage *>*)images
+                     url:(NSString *)url
+                filename:(NSString *)filename
+                    name:(NSString *)name
+                mimeType:(NSString *)mimeType
+              parameters:(NSDictionary *)parameters
+                showView:(UIView *)showView
+                progress:(GDHUploadProgress)progress
+                 success:(SuccessImagesBlock)success
+                    fail:(FailureImagesBlock)fail {
+    /*
+    // 准备保存结果的数组，元素个数与上传的图片个数相同，先用 NSNull 占位
+    NSMutableArray * result      = [NSMutableArray array];
+    NSMutableArray * errorresult = [NSMutableArray array];
+    NSMutableArray * errorimage  = [NSMutableArray arrayWithArray:images];
+    
+    for (NSInteger i = 0; i < images.count; i++) {
+        [result addObject:[NSNull null]];
+        [errorresult addObject:[NSNull null]];
+    }
+    
+    if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown ) {
+        SHOW_ALERT(@"网络连接断开,请检查网络!");
+        if (fail) {
+            fail(errorimage, errorresult);
+        }
+        //还原初始值
+        [GDHNetworkingObject huanyuanchushizhi:nil];
+        return ;
+    }
+    
+    if (showView) {
+        [GDHNetworkingObject sharedInstance].hud = [MBProgressHUD showHUDAddedTo:showView animated:YES];
+        [GDHNetworkingObject sharedInstance].hud.mode = MBProgressHUDModeDeterminate;
+        //[MBProgressHUD showHUDAddedTo:showView animated:YES];
+    }
+    
+    if ([self baseUrl] == nil) {
+        if ([NSURL URLWithString:url] == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (fail) {
+                fail(errorimage, errorresult);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return;
+        }
+    } else {
+        if ([NSURL URLWithString:[NSString stringWithFormat:@"%@%@", [self baseUrl], url]] == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (fail) {
+                fail(errorimage, errorresult);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return;
+        }
+    }
+    
+    if ([self shouldEncode]) {
+        url = [self encodeUrl:url];
+    }
+    
+    NSString *absolute = [self absoluteUrlWithPath:url];
+    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
+    
+    dispatch_group_t group = dispatch_group_create();
+    for (NSInteger i = 0; i < images.count; i++) {
+        dispatch_group_enter(group);
+        UIImage * image = images[i];
+        
+        GDHURLSessionTask *session = [manager POST:url parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+            
+            NSData *imageData = UIImageJPEGRepresentation(image, 1);
+            NSString *imageFileName = filename;
+            if (filename == nil || ![filename isKindOfClass:[NSString class]] || filename.length == 0) {
+                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                formatter.dateFormat = @"yyyyMMddHHmmss";
+                NSString *str = [formatter stringFromDate:[NSDate date]];
+                imageFileName = [NSString stringWithFormat:@"%@.jpg", str];
+            }
+            
+            // 上传图片，以文件流的格式
+            [formData appendPartWithFileData:imageData name:name fileName:imageFileName mimeType:mimeType];
+        } progress:^(NSProgress * _Nonnull uploadProgress) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (images.count == 1) {
+                    if (progress) {
+                        progress(uploadProgress.completedUnitCount, uploadProgress.totalUnitCount);
+                    }
+                    [GDHNetworkingObject sharedInstance].hud.progress = (CGFloat)(uploadProgress.completedUnitCount) / (CGFloat)uploadProgress.totalUnitCount;
+                }else{
+                    CGFloat pro = (CGFloat)uploadProgress.completedUnitCount/uploadProgress.totalUnitCount;
+                    DTLog(@"%lf",pro);
+                }
+            });
+        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            
+            ///
+            //====== 这是准确的做法 以下==========
+            NSDictionary * dict = (NSDictionary *)responseObject;
+            if ([dict[@"status"] integerValue] == 200) {
+                DTLog(@"第 %d 张图片上传成功: %@", (int)i + 1, responseObject);
+                @synchronized (result) { // NSMutableArray 是线程不安全的，所以加个同步锁
+                    result[i] = responseObject;
+                }
+                @synchronized (errorimage) { // NSMutableArray 是线程不安全的，所以加个同步锁
+                    [errorimage removeObject:images[i]];
+                }
+            }
+            //====== 这是准确的做法 以上==========
+            ///
+            
+            //====== 这是通用的做法 以下==== 不算太准确 ======
+            
+            DTLog(@"第 %d 张图片上传成功: %@", (int)i + 1, responseObject);
+            @synchronized (result) { // NSMutableArray 是线程不安全的，所以加个同步锁
+                result[i] = responseObject;
+            }
+            @synchronized (errorimage) { // NSMutableArray 是线程不安全的，所以加个同步锁
+                [errorimage removeObject:images[i]];
+            }
+            
+            //====== 这是通用的做法 以上==== 不算太准确 ======
+
+            
+            dispatch_group_leave(group);
+            [[self allTasks] removeObject:task];
+            if ([self isDebug]) [self logWithSuccessResponse:responseObject url:absolute params:parameters];
+            if (showView != nil) [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:task];
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            @synchronized (errorresult) { // NSMutableArray 是线程不安全的，所以加个同步锁
+                if (error) errorresult[i] = error;
+            }
+            DTLog(@"第 %d 张图片上传失败: %@", (int)i + 1, error);
+            dispatch_group_leave(group);
+            
+            [[self allTasks] removeObject:task];
+            if ([self isDebug]) [self logWithFailError:error url:absolute params:nil];
+            if (showView != nil) [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:task];
+        }];
+        
+        [session resume];
+        if (session) [[self allTasks] addObject:session];
+    }
+    
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        DTLog(@"上传完成!");
+        if (success) {
+            success(result, errorimage);
+        }
+        if (fail && errorimage.count > 0) {
+            fail(errorimage, errorresult);
+        }
+    });
+*/
+}
+
+/**
+ *
+ *	上传文件操作
+ *
+ *	@param url						上传路径
+ *	@param uploadingFile	待上传文件的路径
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
+ *	@param progress			上传进度
+ *	@param success				上传成功回调
+ *	@param fail					上传失败回调
+ *
+ */        
++ (GDHURLSessionTask *)uploadFileWithUrl:(NSString *)url
+                           uploadingFile:(NSString *)uploadingFile
+                                showView:(UIView *)showView
+                                progress:(GDHUploadProgress)progress
+                                 success:(GDHResponseSuccess)success
+                                    fail:(GDHResponseFail)fail{
+    
+    if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown ) {
+        SHOW_ALERT(@"网络连接断开,请检查网络!");
+        if (fail) {
+            fail(nil);
+        }
+        //还原初始值
+        [GDHNetworkingObject huanyuanchushizhi:nil];
+        return nil;
+    }
+    
+    if (showView) {
+        [GDHNetworkingObject sharedInstance].hud = [MBProgressHUD showHUDAddedTo:showView animated:YES];
+        [GDHNetworkingObject sharedInstance].hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
+        //[MBProgressHUD showHUDAddedTo:showView animated:YES];
+    }
+    
+    if ([NSURL URLWithString:uploadingFile] == nil) {
+        DTLog(@"uploadingFile无效，无法生成URL。请检查待上传文件是否存在");
+        if (showView != nil) {
+            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+        }
+        if (fail) {
+            fail(nil);
+        }
+        //还原初始值
+        [GDHNetworkingObject huanyuanchushizhi:nil];
+        return nil;
+    }
+    
+    NSURL *uploadURL = nil;
+    if ([self baseUrl] == nil) {
+        uploadURL = [NSURL URLWithString:url];
+    } else {
+        uploadURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", [self baseUrl], url]];
+    }
+    
+    if (uploadURL == nil) {
+        DTLog(@"URLString无效，无法生成URL。可能是URL中有中文或特殊字符，请尝试Encode URL");
+        if (showView != nil) {
+            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+        }
+        if (fail) {
+            fail(nil);
+        }
+        //还原初始值
+        [GDHNetworkingObject huanyuanchushizhi:nil];
+        return nil;
+    }
+    
+    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
+    NSURLRequest *request = [NSURLRequest requestWithURL:uploadURL];
+    GDHURLSessionTask * session = nil;
+    
+    [manager uploadTaskWithRequest:request fromFile:[NSURL URLWithString:uploadingFile] progress:^(NSProgress * _Nonnull uploadProgress) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (progress) {
+                progress(uploadProgress.completedUnitCount, uploadProgress.totalUnitCount);
+            }
+            [GDHNetworkingObject sharedInstance].hud.progress = (CGFloat)(uploadProgress.completedUnitCount) / (CGFloat)uploadProgress.totalUnitCount;
+        });
+    } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+        [self successResponse:responseObject callback:success];
+        if (error) {
+            [self handleCallbackWithError:error fail:fail];
+            
+            if ([self isDebug]) {
+                [self logWithFailError:error url:response.URL.absoluteString params:nil];
+            }
+            
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:session];
+
+        } else {
+            if ([self isDebug]) {
+                [self logWithSuccessResponse:responseObject
+                                         url:response.URL.absoluteString
+                                      params:nil];
+            }
+            
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (fail) {
+                fail(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:session];
+        }
+    }];
+    
+    if (session) {
+        [[self allTasks] addObject:session];
+    }
+    
+    return session;
+}
+
+/*!
+ *
+ *  下载文件
+ *
+ *  @param url           下载URL
+ *  @param saveToPath    下载到哪个路径下
+ *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
+ *  @param progressBlock 下载进度
+ *  @param success       下载成功后的回调
+ *  @param failure       下载失败后的回调
+ */
++ (GDHURLSessionTask *)downloadWithUrl:(NSString *)url
+                            saveToPath:(NSString *)saveToPath
+                              showView:(UIView *)showView
+                              progress:(GDHDownloadProgress)progressBlock
+                               success:(GDHResponseSuccess)success
+                               failure:(GDHResponseFail)failure{
+    
+    if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown ) {
+        SHOW_ALERT(@"网络连接断开,请检查网络!");
+        failure(nil);
+        [GDHNetworkingObject huanyuanchushizhi:nil];
+        return nil;
+    }
+    
+    if (showView) {
+        [GDHNetworkingObject sharedInstance].hud = [MBProgressHUD showHUDAddedTo:showView animated:YES];
+        [GDHNetworkingObject sharedInstance].hud.mode = MBProgressHUDModeDeterminate;
+        //[MBProgressHUD showHUDAddedTo:showView animated:YES];MBProgressHUDModeDeterminate
+    }
+    
+    if ([self baseUrl] == nil) {
+        if ([NSURL URLWithString:url] == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            failure(nil);
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return nil;
+        }
+    } else {
+        if ([NSURL URLWithString:[NSString stringWithFormat:@"%@%@", [self baseUrl], url]] == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            failure(nil);
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return nil;
+        }
+    }
+    
+    NSURLRequest *downloadRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
+    
+    GDHURLSessionTask *session = nil;
+    
+    session = [manager downloadTaskWithRequest:downloadRequest progress:^(NSProgress * _Nonnull downloadProgress) {
+        if (progressBlock) {
+            progressBlock(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount,downloadProgress.totalUnitCount-downloadProgress.completedUnitCount);
+        }
+        
+        [GDHNetworkingObject sharedInstance].hud.progress = (CGFloat)(downloadProgress.completedUnitCount) / (CGFloat)downloadProgress.totalUnitCount;
+    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+        return [NSURL fileURLWithPath:saveToPath];
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+        if (error == nil) {
+            
+            if ([self isDebug]) {
+                DTLog(@"Download success for url %@",
+                      [self absoluteUrlWithPath:url]);
+            }
+            
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            
+            if (success) {
+                success(filePath.absoluteString);
+            }
+            [GDHNetworkingObject huanyuanchushizhi:session];
+        } else {
+            [self handleCallbackWithError:error fail:failure];
+            
+            if ([self isDebug]) {
+                DTLog(@"Download fail for url %@, reason : %@",
+                      [self absoluteUrlWithPath:url],
+                      [error description]);
+            }
+            
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            failure(nil);
+            [GDHNetworkingObject huanyuanchushizhi:session];
+        }
+    }];
+    
+    [session resume];
+    if (session) {
+        [[self allTasks] addObject:session];
+    }
+    
+    return session;
+}
+
+
+
+
+
+
+
+
+- (void)finishedRequest:(id)data didFaild:(NSError*)error
+{
+    if ([self.tagrget respondsToSelector:self.select]) {
+        [self.tagrget performSelector:@selector(finishedRequest:didFaild:) withObject:data withObject:error];
+    }
+}
+
+- (MBProgressHUD *)hud {
+    if (!_hud) {
+        _hud = [[MBProgressHUD alloc] init];
+        // 隐藏时候从父控件中移除
+        _hud.removeFromSuperViewOnHide = YES;
+        // YES代表需要蒙版效果
+        _hud.dimBackground = YES;
+    }
+    return _hud;
+}
+
++ (void)huanyuanchushizhi: (NSURLSessionTask *)task {
+    sg_requestType_complete  = false;
+    sg_responseType_complete = false;
+    sg_isBaseURLChanged = false;
+    
+    if (task) {
+        //[[GDHNetworkingObject manager].session finishTasksAndInvalidate];
+        [task cancel];
+        [[GDHNetworkingObject allTasks] removeObject:task];
+    }
+}
+
+
+
+
+//MARK: - ======= 附加上传数据类 ===== -
++ (GDHURLSessionTask *)upDataUrl:(NSString *)url
+                          params:(NSDictionary *)params
+                        filePath:(NSString *)path
+                        showView:(UIView *)showView
+                        progress:(GDHDownloadProgress)progress
+                    successBlock:(GDHResponseSuccess)successBlock
+                    failureBlock:(GDHResponseFail)failureBlock {
+    if (showView != nil) {
+        [MBProgressHUD showHUDAddedTo:showView animated:YES];
+    }
+    
+    if ([self shouldEncode]) {
+        url = [self encodeUrl:url];
+    }
+    
+    NSString *absolute = [self absoluteUrlWithPath:url];
+    
+    if ([self baseUrl] == nil) {
+        if ([NSURL URLWithString:url] == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (failureBlock) {
+                failureBlock(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return nil;
+        }
+    } else {
+        NSURL *absoluteURL = [NSURL URLWithString:absolute];
+        
+        if (absoluteURL == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (failureBlock) {
+                failureBlock(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return nil;
+        }
+    }
+    
+    AFHTTPSessionManager * manager = [GDHNetworkingObject manager];
+    GDHURLSessionTask *session = nil;
+    session = [manager POST:url parameters: params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        //上传数据:FileData-->data  name-->fileName(固定，和服务器一致)  fileName-->你的语音文件名  mimeType-->我的语音文件type是audio/amr 如果你是图片可能为image/jpeg
+        NSError * error = nil;
+        [formData appendPartWithFileURL:[NSURL fileURLWithPath:path] name:@"voice_file" error:&error];
+        if (error && failureBlock) {
+            failureBlock(error);
+        }
+    } progress:^(NSProgress * _Nonnull uploadProgress) {
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (successBlock) {
+            successBlock(responseObject);
+        }
+        [GDHNetworkingObject huanyuanchushizhi:task];
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if (error && failureBlock) {
+            failureBlock(error);
+        }
+        [GDHNetworkingObject huanyuanchushizhi:task];
+    }];
+    
+    if (session) {
+        [[self allTasks] addObject:session];
+    }
+    
+    return session;
+}
+
+
+
++ (GDHURLSessionTask *)upDataUrl:(NSString *)url
+                          params:(NSDictionary *)params
+                        filePath:(NSString *)path
+                            name:(NSString *)name
+                        showView:(UIView *)showView
+                        progress:(GDHDownloadProgress)progress
+                    successBlock:(GDHResponseSuccess)successBlock
+                    failureBlock:(GDHResponseFail)failureBlock {
+    if (showView != nil) {
+        [MBProgressHUD showHUDAddedTo:showView animated:YES];
+    }
+    
+    if ([self shouldEncode]) {
+        url = [self encodeUrl:url];
+    }
+    
+    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
+    NSString *absolute = [self absoluteUrlWithPath:url];
+    
+    if ([self baseUrl] == nil) {
+        if ([NSURL URLWithString:url] == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (failureBlock) {
+                failureBlock(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return nil;
+        }
+    } else {
+        NSURL *absoluteURL = [NSURL URLWithString:absolute];
+        
+        if (absoluteURL == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (failureBlock) {
+                failureBlock(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return nil;
+        }
+    }
+    GDHURLSessionTask *session = nil;
+    session = [manager POST:url parameters: params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        //上传数据:FileData-->data  name-->fileName(固定，和服务器一致)  fileName-->你的语音文件名  mimeType-->我的语音文件type是audio/amr 如果你是图片可能为image/jpeg
+        NSError * error = nil;
+        [formData appendPartWithFileURL:[NSURL fileURLWithPath:path] name:name error:&error];
+        if (error && failureBlock) {
+            failureBlock(error);
+        }
+    } progress:^(NSProgress * _Nonnull uploadProgress) {
+        ///完成的百分比
+        double wanch = uploadProgress.fractionCompleted;
+        ///总的大小
+        int64_t total = uploadProgress.totalUnitCount;
+        ///已完成的
+        int64_t ywctotal = uploadProgress.completedUnitCount;
+        if (progress) {
+            progress(ywctotal, total, total-ywctotal);
+        }
+        DTLog(@"%lld, --->:%lld, --->:%lf",total,ywctotal,wanch);
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (successBlock) {
+            successBlock(responseObject);
+        }
+        if ([self isDebug]) {
+            [self logWithSuccessResponse:responseObject url:absolute params:params];
+        }
+        [GDHNetworkingObject huanyuanchushizhi:task];
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if (error && failureBlock) {
+            failureBlock(error);
+        }
+        [GDHNetworkingObject huanyuanchushizhi:task];
+    }];
+    
+    if (session) {
+        [[self allTasks] addObject:session];
+    }
+    
+    return session;
+}
+
+
+#pragma mark 上传图片
++ (GDHURLSessionTask *)uploadImageWithUrl:(NSString *)url
+                                   photos:(NSArray *)photos
+                                     name:(NSString *)name
+                                 mimeType:(NSString *)mimeType
+                                   params:(NSDictionary *)params
+                                 showView:(UIView *)showView
+                                 progress:(GDHDownloadProgress)progress
+                                  success:(GDHResponseSuccess)successBlock
+                                  failure:(GDHResponseFail)failureBlock
+{
+    if (showView != nil) {
+        [MBProgressHUD showHUDAddedTo:showView animated:YES];
+    }
+    
+    if ([self shouldEncode]) {
+        url = [self encodeUrl:url];
+    }
+    
+    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
+    NSString *absolute = [self absoluteUrlWithPath:url];
+    
+    if ([self baseUrl] == nil) {
+        if ([NSURL URLWithString:url] == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (failureBlock) {
+                failureBlock(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return nil;
+        }
+    } else {
+        NSURL *absoluteURL = [NSURL URLWithString:absolute];
+        
+        if (absoluteURL == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (failureBlock) {
+                failureBlock(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return nil;
+        }
+    }
+    GDHURLSessionTask *session = nil;
+    session = [manager POST:url parameters: params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        for (int i = 0; i < photos.count; i ++) {
+            NSDateFormatter *formatter=[[NSDateFormatter alloc]init];
+            formatter.dateFormat = @"yyyyMMddHHmmss";
+            NSString *str = [formatter stringFromDate:[NSDate date]];
+            NSString *fileName = [NSString stringWithFormat:@"%@.jpg",str];
+            UIImage *image = photos[i];
+            NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
+            if (imageData == nil) {
+                if (failureBlock) {
+                    failureBlock([NSError new]);
+                }
+                break;
+            }
+            NSString * nameFile = [NSString stringWithFormat:@"%@%d",name, i+1];
+            [formData appendPartWithFileData:imageData name:nameFile fileName:fileName mimeType:mimeType];
+        }
+    } progress:^(NSProgress * _Nonnull uploadProgress) {
+        ///完成的百分比
+        double wanch = uploadProgress.fractionCompleted;
+        ///总的大小
+        int64_t total = uploadProgress.totalUnitCount;
+        ///已完成的
+        int64_t ywctotal = uploadProgress.completedUnitCount;
+        if (progress) {
+            progress(ywctotal, total, total-ywctotal);
+        }
+        DTLog(@"%lld, --->:%lld, --->:%lf",total,ywctotal,wanch);
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (successBlock == nil) return ;
+        successBlock(responseObject);
+        /*NSString *resultCode = [NSString stringWithFormat:@"%@",[responseObject objectForKey:@"result_code"]];
+        NSString *resultInfo = [responseObject objectForKey:@"result_info"];
+        NSLog(@"resultInfo is %@",resultInfo);
+        if ([resultCode isEqualToString:@"1"]) {
+            if (successBlock == nil) return ;
+            successBlock(responseObject);
+        }else {
+            
+        }*/
+        if ([self isDebug]) {
+            [self logWithSuccessResponse:responseObject url:absolute params:params];
+        }
+        [GDHNetworkingObject huanyuanchushizhi:task];
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if (error && failureBlock) {
+            failureBlock(error);
+        }
+        [GDHNetworkingObject huanyuanchushizhi:task];
+    }];
+    
+    if (session) {
+        [[self allTasks] addObject:session];
+    }
+    
+    return session;
+}
+
+
+///上传视频 和 图片 共存
++ (GDHURLSessionTask *)uploadImageVideoWithUrl:(NSString *)url
+                                        photos:(NSArray *)photos
+                                          name:(NSString *)name
+                                      mimeType:(NSString *)mimeType
+                                 fileVideoPath:(NSString *)videoPath
+                                     videoName:(NSString *)videoName
+                                        params:(NSDictionary *)params
+                                      showView:(UIView *)showView
+                                      progress:(GDHDownloadProgress)progress
+                                       success:(GDHResponseSuccess)successBlock
+                                       failure:(GDHResponseFail)failureBlock
+{
+    if (showView != nil) {
+        [MBProgressHUD showHUDAddedTo:showView animated:YES];
+    }
+    
+    if ([self shouldEncode]) {
+        url = [self encodeUrl:url];
+    }
+    
+    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
+    NSString *absolute = [self absoluteUrlWithPath:url];
+    
+    if ([self baseUrl] == nil) {
+        if ([NSURL URLWithString:url] == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (failureBlock) {
+                failureBlock(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return nil;
+        }
+    } else {
+        NSURL *absoluteURL = [NSURL URLWithString:absolute];
+        
+        if (absoluteURL == nil) {
+            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
+            if (showView != nil) {
+                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
+            }
+            if (failureBlock) {
+                failureBlock(nil);
+            }
+            //还原初始值
+            [GDHNetworkingObject huanyuanchushizhi:nil];
+            return nil;
+        }
+    }
+    GDHURLSessionTask *session = nil;
+    session = [manager POST:url parameters: params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        for (int i = 0; i < photos.count; i ++) {
+            NSDateFormatter *formatter=[[NSDateFormatter alloc]init];
+            formatter.dateFormat = @"yyyyMMddHHmmss";
+            NSString *str = [formatter stringFromDate:[NSDate date]];
+            NSString *fileName = [NSString stringWithFormat:@"%@.jpg",str];
+            UIImage *image = photos[i];
+            NSData *imageData = UIImageJPEGRepresentation(image, 0.28);
+            NSString * nameFile = [NSString stringWithFormat:@"%@%d",name, i+1];
+            [formData appendPartWithFileData:imageData name:nameFile fileName:fileName mimeType:mimeType];
+        }
+        //上传数据:FileData-->data  name-->fileName(固定，和服务器一致)  fileName-->你的语音文件名  mimeType-->我的语音文件type是audio/amr 如果你是图片可能为image/jpeg
+        NSError * error = nil;
+        [formData appendPartWithFileURL:[NSURL fileURLWithPath:videoPath] name:videoName error:&error];
+        if (error && failureBlock) {
+            failureBlock(error);
+        }
+    } progress:^(NSProgress * _Nonnull uploadProgress) {
+        ///完成的百分比
+        double wanch = uploadProgress.fractionCompleted;
+        ///总的大小
+        int64_t total = uploadProgress.totalUnitCount;
+        ///已完成的
+        int64_t ywctotal = uploadProgress.completedUnitCount;
+        if (progress) {
+            progress(ywctotal, total, total-ywctotal);
+        }
+        DTLog(@"%lld, --->:%lld, --->:%lf",total,ywctotal,wanch);
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (successBlock == nil) return ;
+        successBlock(responseObject);
+        /*NSString *resultCode = [NSString stringWithFormat:@"%@",[responseObject objectForKey:@"result_code"]];
+         NSString *resultInfo = [responseObject objectForKey:@"result_info"];
+         NSLog(@"resultInfo is %@",resultInfo);
+         if ([resultCode isEqualToString:@"1"]) {
+         if (successBlock == nil) return ;
+         successBlock(responseObject);
+         }else {
+         
+         }*/
+        if ([self isDebug]) {
+            [self logWithSuccessResponse:responseObject url:absolute params:params];
+        }
+        [GDHNetworkingObject huanyuanchushizhi:task];
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if (error && failureBlock) {
+            failureBlock(error);
+        }
+        [GDHNetworkingObject huanyuanchushizhi:task];
+    }];
+    
+    if (session) {
+        [[self allTasks] addObject:session];
+    }
+    
+    return session;
+}
+
+#pragma mark - ===== 请求失败 或者 成功 后续处理方面 ===== -
 + (NSString *)absoluteUrlWithPath:(NSString *)path {
     if (path == nil || path.length == 0) {
         return @"";
@@ -957,1100 +2208,6 @@ static inline NSString *cachePath() {
               [error localizedDescription]);
     }
 }
-
-
-
-
-- (void)finishedRequest:(id)data didFaild:(NSError*)error
-{
-    if ([self.tagrget respondsToSelector:self.select]) {
-        [self.tagrget performSelector:@selector(finishedRequest:didFaild:) withObject:data withObject:error];
-    }
-}
-
-- (MBProgressHUD *)hud {
-    if (!_hud) {
-        _hud = [[MBProgressHUD alloc] init];
-        // 隐藏时候从父控件中移除
-        _hud.removeFromSuperViewOnHide = YES;
-        // YES代表需要蒙版效果
-        _hud.dimBackground = YES;
-    }
-    return _hud;
-}
-
-+ (void)huanyuanchushizhi {
-    sg_requestType_complete  = NO;
-    sg_responseType_complete = NO;
-    [[GDHNetworkingObject manager].session finishTasksAndInvalidate];
-}
-
-
-
-
-#pragma mark - 创建一个网络请求项
-/**
- *  创建一个网络请求项
- *
- *  @param url          网络请求URL
- *  @param networkType  网络请求方式
- *  @param params       网络请求参数
- *  @param refreshCache 是否获取缓存。无网络或者获取数据失败则获取本地缓存数据
- *  @param delegate     网络请求的委托，如果没有取消网络请求的需求，可传nil
- *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
- *  @param successBlock 请求成功后的block
- *  @param failureBlock 请求失败后的block
- *
- *  @return 根据网络请求的委托delegate而生成的唯一标示
- */
-+ (GDHURLSessionTask *)initWithtype:(GDHNetWorkType)networkType
-                                url:(NSString *)url
-                             params:(NSDictionary *)params
-                       refreshCache:(BOOL)refreshCache
-                           delegate:(id)delegate
-                             target:(id)target
-                             action:(SEL)action
-                          hashValue:(NSUInteger)hashValue
-                           showView:(UIView *)showView
-                           progress:(GDHDownloadProgress)progress
-                       successBlock:(GDHResponseSuccess)successBlock
-                       failureBlock:(GDHResponseFail)failureBlock{
-    
-    GDHNetworkingObject * object = [GDHNetworkingObject sharedInstance];
-    
-    object.delegate = delegate;
-    object.tagrget  = target;
-    object.select   = action;
-    
-    if (showView != nil) {
-        [MBProgressHUD showHUDAddedTo:showView animated:YES];
-    }
-    
-    if ([self shouldEncode]) {
-        url = [self encodeUrl:url];
-    }
-    
-    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
-    NSString *absolute = [self absoluteUrlWithPath:url];
-    
-    ///错误的信息
-    NSError * error1 = [NSError errorWithDomain:NSCocoaErrorDomain code:500 userInfo:@{NSLocalizedDescriptionKey:@"意外出错"}];
-    
-    if ([self baseUrl] == nil) {
-        if ([NSURL URLWithString:url] == nil) {
-            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failureBlock) {
-                failureBlock(error1);
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
-        }
-    } else {
-        NSURL *absoluteURL = [NSURL URLWithString:absolute];
-        
-        if (absoluteURL == nil) {
-            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failureBlock) {
-                failureBlock(error1);
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
-        }
-    }
-    
-    GDHURLSessionTask *session = nil;
-    
-    if (networkType == GDHNetWorkTypeGET) {//GET请求
-        if (sg_cacheGet) {//需要获取缓存
-            if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown) {
-                id response = [GDHNetworkingObject cahceResponseWithURL:absolute parameters:params];
-                
-                if (refreshCache && response) {//缓存数据中存在
-                    
-                    if (successBlock) {//block返回数据
-                        [self successResponse:response callback:successBlock];
-                    }
-                    
-                    if (delegate) {//代理
-                        if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
-                            [object.delegate requestDidFinishLoading:[self tryToParseData:response]];
-                        };
-                    }
-                    
-                    //方法
-                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
-                    
-                    if ([self isDebug]) {
-                        [self logWithSuccessResponse:response url:absolute params:params];
-                    }
-                    
-                    if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:true];
-                    
-                    //还原初始值
-                    [GDHNetworkingObject huanyuanchushizhi];
-                    return nil;
-                }else{
-                    if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:true];
-                    if (failureBlock) failureBlock(error1);
-                    SHOW_ALERT(@"网络连接断开,请检查网络!");
-                    //还原初始值
-                    [GDHNetworkingObject huanyuanchushizhi];
-                    return nil;
-                }
-            }
-        }
-        
-        session = [manager GET:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
-            if (progress) {
-                progress(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount,downloadProgress.totalUnitCount-downloadProgress.completedUnitCount);
-            }
-        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-            
-            //Block
-            if (successBlock) [self successResponse:responseObject callback:successBlock];
-            
-            if (delegate) {//delegate
-                if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
-                    [object.delegate requestDidFinishLoading:[self tryToParseData:responseObject]];
-                };
-            }
-            
-            //方法
-            [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:responseObject] withObject:nil];
-            
-            if (sg_cacheGet) {
-                [self cacheResponseObject:responseObject request:absolute parameters:params];
-            }
-            
-            [[self allTasks] removeObject:task];
-            
-            if ([self isDebug]) {
-                [self logWithSuccessResponse:responseObject url:absolute params:params];
-            }
-            
-            if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            
-        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-            [[self allTasks] removeObject:task];
-            
-            if ([error code] < 0 && refreshCache) {// 获取缓存
-                id response = [GDHNetworkingObject cahceResponseWithURL:absolute parameters:params];
-                
-                if (response) {
-                    if (successBlock) {//block返回数据
-                        [self successResponse:response callback:successBlock];
-                    }
-                    
-                    if (delegate) {//代理
-                        if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
-                            [object.delegate requestDidFinishLoading:[self tryToParseData:response]];
-                        };
-                    }
-                    //方法
-                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
-                    
-                    if ([self isDebug]) {
-                        [self logWithSuccessResponse:response url:absolute params:params];
-                    }
-                    if (showView) {
-                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                    }
-                    
-                } else {
-                    
-                    //block
-                    [self handleCallbackWithError:error fail:failureBlock];
-                    
-                    //代理
-                    if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
-                        [object.delegate requestdidFailWithError:error];
-                    }
-                    //方法
-                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
-                    
-                    if ([self isDebug]) {
-                        [self logWithFailError:error url:absolute params:params];
-                    }
-                    if (showView) {
-                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                    }
-                }
-            } else {
-                //block
-                [self handleCallbackWithError:error fail:failureBlock];
-                
-                //代理
-                if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
-                    [object.delegate requestdidFailWithError:error];
-                }
-                //方法
-                [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
-                
-                if ([self isDebug]) {
-                    [self logWithFailError:error url:absolute params:params];
-                }
-                
-                if (showView) {
-                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                }
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-        }];
-        
-    }else if (networkType == GDHNetWorkTypePOST){//POST请求
-        if (sg_cachePost) {
-            if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown) {// 获取缓存 ===> 没有网
-                id response = [GDHNetworkingObject cahceResponseWithURL:absolute parameters:params];
-                
-                if (refreshCache && response) {//===>获取缓存数据
-                    if (successBlock) {//block返回数据
-                        [self successResponse:response callback:successBlock];
-                    }
-                    
-                    if (delegate) {//代理
-                        if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
-                            [object.delegate requestDidFinishLoading:[self tryToParseData:response]];
-                        };
-                    }
-                    
-                    //方法
-                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
-                    
-                    if ([self isDebug]) {
-                        [self logWithSuccessResponse:response url:absolute params:params];
-                    }
-                    
-                    if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:true];
-                    
-                    //还原初始值
-                    [GDHNetworkingObject huanyuanchushizhi];
-                    return nil;
-                }else{
-                    if (showView) [MBProgressHUD hideAllHUDsForView:showView animated:true];
-                    if (failureBlock) failureBlock(error1);
-                    SHOW_ALERT(@"网络连接断开,请检查网络!");
-                    //还原初始值
-                    [GDHNetworkingObject huanyuanchushizhi];
-                    return nil;
-                }
-            }
-        }
-        
-        session = [manager POST:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
-            if (progress) {
-                progress(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount,downloadProgress.totalUnitCount-downloadProgress.completedUnitCount);
-            }
-        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-            if (successBlock) {//block返回数据
-                [self successResponse:responseObject callback:successBlock];
-            }
-            
-            if (delegate) {//代理
-                if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
-                    [object.delegate requestDidFinishLoading:[self tryToParseData:responseObject]];
-                };
-            }
-            
-            //方法
-            [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:responseObject] withObject:nil];
-            
-            if ([self isDebug]) {
-                [self logWithSuccessResponse:responseObject
-                                         url:absolute
-                                      params:params];
-            }
-            
-            if (sg_cachePost) {
-                [self cacheResponseObject:responseObject request:absolute  parameters:params];
-            }
-            
-            [[self allTasks] removeObject:task];
-            
-            if ([self isDebug]) {
-                [self logWithSuccessResponse:responseObject
-                                         url:absolute
-                                      params:params];
-            }
-            
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            
-        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-            [[self allTasks] removeObject:task];
-            
-            if ([error code] < 0 && refreshCache) {// 获取缓存
-                id response = [GDHNetworkingObject cahceResponseWithURL:absolute
-                                                             parameters:params];
-                
-                if (response) {
-                    if (successBlock) {//block返回数据
-                        [self successResponse:response callback:successBlock];
-                    }
-                    
-                    if (delegate) {//代理
-                        if ([object.delegate respondsToSelector:@selector(requestDidFinishLoading:)]) {
-                            [object.delegate requestDidFinishLoading:[self tryToParseData:response]];
-                        };
-                    }
-                    
-                    //方法
-                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:[self tryToParseData:response] withObject:nil];
-                    
-                    if ([self isDebug]) {
-                        [self logWithSuccessResponse:response
-                                                 url:absolute
-                                              params:params];
-                    }
-                    
-                    if (showView != nil) {
-                        [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                    }
-                    
-                } else {
-                    [self handleCallbackWithError:error fail:failureBlock];
-                    //代理
-                    if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
-                        [object.delegate requestdidFailWithError:error];
-                    }
-                    //方法
-                    [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
-                    if ([self isDebug]) {
-                        [self logWithFailError:error url:absolute params:params];
-                    }
-                }
-                
-                if (showView != nil) {
-                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                }
-            } else {
-                [self handleCallbackWithError:error fail:failureBlock];
-                
-                //代理
-                if ([object.delegate respondsToSelector:@selector(requestdidFailWithError:)]) {
-                    [object.delegate requestdidFailWithError:error];
-                }
-                //方法
-                [object performSelector:@selector(finishedRequest: didFaild:) withObject:nil withObject:error];
-                
-                if ([self isDebug]) {
-                    [self logWithFailError:error url:absolute params:params];
-                }
-                
-                if (showView != nil) {
-                    [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-                }
-            }
-            
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-        }];
-        
-    }
-    
-    if (session) {
-        [[self allTasks] addObject:session];
-    }
-    
-    return session;
-}
-
-/**
- *
- *    图片上传接口，若不指定baseurl，可传完整的url
- *
- *    @param image            图片对象
- *    @param url                上传图片的接口路径，如/path/images/
- *    @param filename        给图片起一个名字，默认为当前日期时间,格式为"yyyyMMddHHmmss"，后缀为`jpg`
- *    @param name                与指定的图片相关联的名称，这是由后端写接口的人指定的，如imagefiles
- *    @param mimeType        默认为image/jpeg
- *    @param parameters    参数
- *    @param progress        上传进度
- *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
- *    @param success        上传成功回调
- *    @param fail            上传失败回调
- *
- */
-+ (void)uploadWithImage:(UIImage *)image
-                    url:(NSString *)url
-               filename:(NSString *)filename
-                   name:(NSString *)name
-               mimeType:(NSString *)mimeType
-             parameters:(NSDictionary *)parameters
-               showView:(UIView *)showView
-               progress:(GDHUploadProgress)progress
-                success:(SuccessImagesBlock)success
-                   fail:(FailureImagesBlock)fail {
-}
-
-
-/**
- *
- *    图片上传接口，若不指定baseurl，可传完整的url
- *
- *    @param images            图片对象数组
- *    @param url                上传图片的接口路径，如/path/images/
- *    @param filename        给图片起一个名字，默认为当前日期时间,格式为"yyyyMMddHHmmss"，后缀为`jpg`
- *    @param name                与指定的图片相关联的名称，这是由后端写接口的人指定的，如imagefiles
- *    @param mimeType        默认为image/jpeg
- *    @param parameters    参数
- *    @param progress        上传进度
- *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
- *    @param success        上传成功回调
- *    @param fail            上传失败回调
- *
- */
-+ (void)uploadWithImages:(NSArray <UIImage *>*)images
-                     url:(NSString *)url
-                filename:(NSString *)filename
-                    name:(NSString *)name
-                mimeType:(NSString *)mimeType
-              parameters:(NSDictionary *)parameters
-                showView:(UIView *)showView
-                progress:(GDHUploadProgress)progress
-                 success:(SuccessImagesBlock)success
-                    fail:(FailureImagesBlock)fail {
-}
-
-/**
- *
- *    上传文件操作
- *
- *    @param url                        上传路径
- *    @param uploadingFile    待上传文件的路径
- *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
- *    @param progress            上传进度
- *    @param success                上传成功回调
- *    @param fail                    上传失败回调
- *
- */
-+ (GDHURLSessionTask *)uploadFileWithUrl:(NSString *)url
-                           uploadingFile:(NSString *)uploadingFile
-                                showView:(UIView *)showView
-                                progress:(GDHUploadProgress)progress
-                                 success:(GDHResponseSuccess)success
-                                    fail:(GDHResponseFail)fail{
-    
-    ///错误的信息
-    NSError * error1 = [NSError errorWithDomain:NSCocoaErrorDomain code:500 userInfo:@{NSLocalizedDescriptionKey:@"意外出错"}];
-    if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown ) {
-        SHOW_ALERT(@"网络连接断开,请检查网络!");
-        if (fail) {
-            fail(error1);
-        }
-        //还原初始值
-        [GDHNetworkingObject huanyuanchushizhi];
-        return nil;
-    }
-    
-    if (showView) {
-        [GDHNetworkingObject sharedInstance].hud = [MBProgressHUD showHUDAddedTo:showView animated:YES];
-        [GDHNetworkingObject sharedInstance].hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
-        //[MBProgressHUD showHUDAddedTo:showView animated:YES];
-    }
-    
-    if ([NSURL URLWithString:uploadingFile] == nil) {
-        DTLog(@"uploadingFile无效，无法生成URL。请检查待上传文件是否存在");
-        if (showView != nil) {
-            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-        }
-        if (fail) {
-            fail(error1);
-        }
-        //还原初始值
-        [GDHNetworkingObject huanyuanchushizhi];
-        return nil;
-    }
-    
-    NSURL *uploadURL = nil;
-    if ([self baseUrl] == nil) {
-        uploadURL = [NSURL URLWithString:url];
-    } else {
-        uploadURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", [self baseUrl], url]];
-    }
-    
-    if (uploadURL == nil) {
-        DTLog(@"URLString无效，无法生成URL。可能是URL中有中文或特殊字符，请尝试Encode URL");
-        if (showView != nil) {
-            [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-        }
-        if (fail) {
-            fail(error1);
-        }
-        //还原初始值
-        [GDHNetworkingObject huanyuanchushizhi];
-        return nil;
-    }
-    
-    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
-    NSURLRequest *request = [NSURLRequest requestWithURL:uploadURL];
-    GDHURLSessionTask *session = nil;
-    
-    [manager uploadTaskWithRequest:request fromFile:[NSURL URLWithString:uploadingFile] progress:^(NSProgress * _Nonnull uploadProgress) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (progress) {
-                progress(uploadProgress.completedUnitCount, uploadProgress.totalUnitCount);
-            }
-            [GDHNetworkingObject sharedInstance].hud.progress = (CGFloat)(uploadProgress.completedUnitCount) / (CGFloat)uploadProgress.totalUnitCount;
-        });
-    } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
-        [[self allTasks] removeObject:session];
-        
-        [self successResponse:responseObject callback:success];
-        
-        if (error) {
-            [self handleCallbackWithError:error fail:fail];
-            
-            if ([self isDebug]) {
-                [self logWithFailError:error url:response.URL.absoluteString params:nil];
-            }
-            
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            
-        } else {
-            if ([self isDebug]) {
-                [self logWithSuccessResponse:responseObject
-                                         url:response.URL.absoluteString
-                                      params:nil];
-            }
-            
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (fail) {
-                fail(error1);
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-        }
-    }];
-    
-    if (session) {
-        [[self allTasks] addObject:session];
-    }
-    
-    return session;
-}
-
-/*!
- *
- *  下载文件
- *
- *  @param url           下载URL
- *  @param saveToPath    下载到哪个路径下
- *  @param showView     showView为nil时 则不显示 showView不为nil时则显示加载框
- *  @param progressBlock 下载进度
- *  @param success       下载成功后的回调
- *  @param failure       下载失败后的回调
- */
-+ (GDHURLSessionTask *)downloadWithUrl:(NSString *)url
-                            saveToPath:(NSString *)saveToPath
-                              showView:(UIView *)showView
-                              progress:(GDHDownloadProgress)progressBlock
-                               success:(GDHResponseSuccess)success
-                               failure:(GDHResponseFail)failure{
-    
-    ///错误的信息
-    NSError * error1 = [NSError errorWithDomain:NSCocoaErrorDomain code:500 userInfo:@{NSLocalizedDescriptionKey:@"意外出错"}];
-    if (sg_networkStatus == GDHNetworkStatusNotReachable ||  sg_networkStatus == GDHNetworkStatusUnknown ) {
-        SHOW_ALERT(@"网络连接断开,请检查网络!");
-        if (failure) failure(error1);
-        [GDHNetworkingObject huanyuanchushizhi];
-        return nil;
-    }
-    
-    if (showView) {
-        [GDHNetworkingObject sharedInstance].hud = [MBProgressHUD showHUDAddedTo:showView animated:YES];
-        [GDHNetworkingObject sharedInstance].hud.mode = MBProgressHUDModeDeterminate;
-        //[MBProgressHUD showHUDAddedTo:showView animated:YES];MBProgressHUDModeDeterminate
-    }
-    
-    if ([self baseUrl] == nil) {
-        if ([NSURL URLWithString:url] == nil) {
-            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failure) failure(error1);
-            [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
-        }
-    } else {
-        if ([NSURL URLWithString:[NSString stringWithFormat:@"%@%@", [self baseUrl], url]] == nil) {
-            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failure) failure(error1);
-            [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
-        }
-    }
-    
-    NSURLRequest *downloadRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
-    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
-    
-    GDHURLSessionTask *session = nil;
-    
-    session = [manager downloadTaskWithRequest:downloadRequest progress:^(NSProgress * _Nonnull downloadProgress) {
-        if (progressBlock) {
-            progressBlock(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount,downloadProgress.totalUnitCount-downloadProgress.completedUnitCount);
-        }
-        
-        [GDHNetworkingObject sharedInstance].hud.progress = (CGFloat)(downloadProgress.completedUnitCount) / (CGFloat)downloadProgress.totalUnitCount;
-    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-        return [NSURL fileURLWithPath:saveToPath];
-    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
-        [[self allTasks] removeObject:session];
-        
-        if (error == nil) {
-            
-            if ([self isDebug]) {
-                DTLog(@"Download success for url %@",
-                      [self absoluteUrlWithPath:url]);
-            }
-            
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            
-            if (success) {
-                success(filePath.absoluteString);
-                [GDHNetworkingObject huanyuanchushizhi];
-            }
-            
-        } else {
-            [self handleCallbackWithError:error fail:failure];
-            
-            if ([self isDebug]) {
-                DTLog(@"Download fail for url %@, reason : %@",
-                      [self absoluteUrlWithPath:url],
-                      [error description]);
-            }
-            
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failure) failure(error);
-            [GDHNetworkingObject huanyuanchushizhi];
-        }
-    }];
-    
-    [session resume];
-    if (session) {
-        [[self allTasks] addObject:session];
-    }
-    
-    return session;
-}
-
-
-
-///MARK: - ======= 附加上传数据类 ===== -
-+ (GDHURLSessionTask *)upDataUrl:(NSString *)url
-                          params:(NSDictionary *)params
-                        filePath:(NSString *)path
-                        showView:(UIView *)showView
-                        progress:(GDHDownloadProgress)progress
-                    successBlock:(GDHResponseSuccess)successBlock
-                    failureBlock:(GDHResponseFail)failureBlock {
-    
-    ///错误的信息
-    NSError * error1 = [NSError errorWithDomain:NSCocoaErrorDomain code:500 userInfo:@{NSLocalizedDescriptionKey:@"意外出错"}];
-    
-    if (showView != nil) {
-        [MBProgressHUD showHUDAddedTo:showView animated:YES];
-    }
-    
-    if ([self shouldEncode]) {
-        url = [self encodeUrl:url];
-    }
-    
-    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
-    NSString *absolute = [self absoluteUrlWithPath:url];
-    
-    if ([self baseUrl] == nil) {
-        if ([NSURL URLWithString:url] == nil) {
-            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failureBlock) {
-                failureBlock(error1);
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
-        }
-    } else {
-        NSURL *absoluteURL = [NSURL URLWithString:absolute];
-        
-        if (absoluteURL == nil) {
-            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failureBlock) {
-                failureBlock(error1);
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
-        }
-    }
-    GDHURLSessionTask *session = nil;
-    session = [manager POST:url parameters: params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        //上传数据:FileData-->data  name-->fileName(固定，和服务器一致)  fileName-->你的语音文件名  mimeType-->我的语音文件type是audio/amr 如果你是图片可能为image/jpeg
-        NSError * error = nil;
-        [formData appendPartWithFileURL:[NSURL fileURLWithPath:path] name:@"voice_file" error:&error];
-        if (error && failureBlock) {
-            failureBlock(error);
-        }
-    } progress:^(NSProgress * _Nonnull uploadProgress) {
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if (successBlock) {
-            successBlock(responseObject);
-        }
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        if (error && failureBlock) {
-            failureBlock(error);
-        }
-    }];
-    return session;
-}
-
-
-
-+ (GDHURLSessionTask *)upDataUrl:(NSString *)url
-                          params:(NSDictionary *)params
-                        filePath:(NSString *)path
-                            name:(NSString *)name
-                        showView:(UIView *)showView
-                        progress:(GDHDownloadProgress)progress
-                    successBlock:(GDHResponseSuccess)successBlock
-                    failureBlock:(GDHResponseFail)failureBlock {
-    
-    ///错误的信息
-    NSError * error1 = [NSError errorWithDomain:NSCocoaErrorDomain code:500 userInfo:@{NSLocalizedDescriptionKey:@"意外出错"}];
-    
-    if (showView != nil) {
-        [MBProgressHUD showHUDAddedTo:showView animated:YES];
-    }
-    
-    if ([self shouldEncode]) {
-        url = [self encodeUrl:url];
-    }
-    
-    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
-    NSString *absolute = [self absoluteUrlWithPath:url];
-    
-    if ([self baseUrl] == nil) {
-        if ([NSURL URLWithString:url] == nil) {
-            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failureBlock) {
-                failureBlock(error1);
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
-        }
-    } else {
-        NSURL *absoluteURL = [NSURL URLWithString:absolute];
-        
-        if (absoluteURL == nil) {
-            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failureBlock) {
-                failureBlock(error1);
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
-        }
-    }
-    GDHURLSessionTask *session = nil;
-    session = [manager POST:url parameters: params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        //上传数据:FileData-->data  name-->fileName(固定，和服务器一致)  fileName-->你的语音文件名  mimeType-->我的语音文件type是audio/amr 如果你是图片可能为image/jpeg
-        NSError * error = nil;
-        [formData appendPartWithFileURL:[NSURL fileURLWithPath:path] name:name error:&error];
-        if (error && failureBlock) {
-            failureBlock(error);
-        }
-    } progress:^(NSProgress * _Nonnull uploadProgress) {
-        ///完成的百分比
-        double wanch = uploadProgress.fractionCompleted;
-        ///总的大小
-        int64_t total = uploadProgress.totalUnitCount;
-        ///已完成的
-        int64_t ywctotal = uploadProgress.completedUnitCount;
-        if (progress) {
-            progress(ywctotal, total, total-ywctotal);
-        }
-        DTLog(@"%lld, --->:%lld, --->:%lf",total,ywctotal,wanch);
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if (successBlock) {
-            successBlock(responseObject);
-        }
-        if ([self isDebug]) {
-            [self logWithSuccessResponse:responseObject url:absolute params:params];
-        }
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        if (error && failureBlock) {
-            failureBlock(error);
-        }
-    }];
-    return session;
-}
-
-
-#pragma mark 上传图片
-+ (GDHURLSessionTask *)uploadImageWithUrl:(NSString *)url
-                                   photos:(NSArray *)photos
-                                     name:(NSString *)name
-                                 mimeType:(NSString *)mimeType
-                                   params:(NSDictionary *)params
-                                 showView:(UIView *)showView
-                                 progress:(GDHDownloadProgress)progress
-                                  success:(GDHResponseSuccess)successBlock
-                                  failure:(GDHResponseFail)failureBlock
-{
-    ///错误的信息
-    NSError * error1 = [NSError errorWithDomain:NSCocoaErrorDomain code:500 userInfo:@{NSLocalizedDescriptionKey:@"意外出错"}];
-    
-    if (showView != nil) {
-        [MBProgressHUD showHUDAddedTo:showView animated:YES];
-    }
-    
-    if ([self shouldEncode]) {
-        url = [self encodeUrl:url];
-    }
-    
-    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
-    NSString *absolute = [self absoluteUrlWithPath:url];
-    
-    if ([self baseUrl] == nil) {
-        if ([NSURL URLWithString:url] == nil) {
-            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failureBlock) {
-                failureBlock(error1);
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
-        }
-    } else {
-        NSURL *absoluteURL = [NSURL URLWithString:absolute];
-        
-        if (absoluteURL == nil) {
-            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failureBlock) {
-                failureBlock(error1);
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
-        }
-    }
-    GDHURLSessionTask *session = nil;
-    session = [manager POST:url parameters: params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        for (int i = 0; i < photos.count; i ++) {
-            NSDateFormatter *formatter=[[NSDateFormatter alloc]init];
-            formatter.dateFormat = @"yyyyMMddHHmmss";
-            NSString *str = [formatter stringFromDate:[NSDate date]];
-            NSString *fileName = [NSString stringWithFormat:@"%@.jpg",str];
-            UIImage *image = photos[i];
-            NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
-            if (imageData == nil) {
-                if (failureBlock) {
-                    failureBlock([NSError new]);
-                }
-                break;
-            }
-            NSString * nameFile = [NSString stringWithFormat:@"%@%d",name, i+1];
-            [formData appendPartWithFileData:imageData name:nameFile fileName:fileName mimeType:mimeType];
-        }
-    } progress:^(NSProgress * _Nonnull uploadProgress) {
-        ///完成的百分比
-        double wanch = uploadProgress.fractionCompleted;
-        ///总的大小
-        int64_t total = uploadProgress.totalUnitCount;
-        ///已完成的
-        int64_t ywctotal = uploadProgress.completedUnitCount;
-        if (progress) {
-            progress(ywctotal, total, total-ywctotal);
-        }
-        DTLog(@"%lld, --->:%lld, --->:%lf",total,ywctotal,wanch);
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if (successBlock == nil) return ;
-        successBlock(responseObject);
-        /*NSString *resultCode = [NSString stringWithFormat:@"%@",[responseObject objectForKey:@"result_code"]];
-         NSString *resultInfo = [responseObject objectForKey:@"result_info"];
-         NSLog(@"resultInfo is %@",resultInfo);
-         if ([resultCode isEqualToString:@"1"]) {
-         if (successBlock == nil) return ;
-         successBlock(responseObject);
-         }else {
-         
-         }*/
-        if ([self isDebug]) {
-            [self logWithSuccessResponse:responseObject url:absolute params:params];
-        }
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        if (error && failureBlock) {
-            failureBlock(error);
-        }
-    }];
-    return session;
-}
-
-///上传视频 和 图片 共存
-+ (GDHURLSessionTask *)uploadImageVideoWithUrl:(NSString *)url
-                                        photos:(NSArray *)photos
-                                          name:(NSString *)name
-                                      mimeType:(NSString *)mimeType
-                                 fileVideoPath:(NSString *)videoPath
-                                     videoName:(NSString *)videoName
-                                        params:(NSDictionary *)params
-                                      showView:(UIView *)showView
-                                      progress:(GDHDownloadProgress)progress
-                                       success:(GDHResponseSuccess)successBlock
-                                       failure:(GDHResponseFail)failureBlock
-{
-    ///错误的信息
-    NSError * error1 = [NSError errorWithDomain:NSCocoaErrorDomain code:500 userInfo:@{NSLocalizedDescriptionKey:@"意外出错"}];
-    if (showView != nil) {
-        [MBProgressHUD showHUDAddedTo:showView animated:YES];
-    }
-    
-    if ([self shouldEncode]) {
-        url = [self encodeUrl:url];
-    }
-    
-    AFHTTPSessionManager *manager = [GDHNetworkingObject manager];
-    NSString *absolute = [self absoluteUrlWithPath:url];
-    
-    if ([self baseUrl] == nil) {
-        if ([NSURL URLWithString:url] == nil) {
-            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failureBlock) {
-                failureBlock(error1);
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
-        }
-    } else {
-        NSURL *absoluteURL = [NSURL URLWithString:absolute];
-        
-        if (absoluteURL == nil) {
-            DTLog(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            SHOW_ALERT(@"URLString无效，无法生成URL。可能是URL中有中文，请尝试Encode URL");
-            if (showView != nil) {
-                [MBProgressHUD hideAllHUDsForView:showView animated:YES];
-            }
-            if (failureBlock) {
-                failureBlock(error1);
-            }
-            //还原初始值
-            [GDHNetworkingObject huanyuanchushizhi];
-            return nil;
-        }
-    }
-    GDHURLSessionTask *session = nil;
-    session = [manager POST:url parameters: params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        for (int i = 0; i < photos.count; i ++) {
-            NSDateFormatter *formatter=[[NSDateFormatter alloc]init];
-            formatter.dateFormat = @"yyyyMMddHHmmss";
-            NSString *str = [formatter stringFromDate:[NSDate date]];
-            NSString *fileName = [NSString stringWithFormat:@"%@.jpg",str];
-            UIImage *image = photos[i];
-            NSData *imageData = UIImageJPEGRepresentation(image, 0.28);
-            NSString * nameFile = [NSString stringWithFormat:@"%@%d",name, i+1];
-            [formData appendPartWithFileData:imageData name:nameFile fileName:fileName mimeType:mimeType];
-        }
-        //上传数据:FileData-->data  name-->fileName(固定，和服务器一致)  fileName-->你的语音文件名  mimeType-->我的语音文件type是audio/amr 如果你是图片可能为image/jpeg
-        NSError * error = nil;
-        [formData appendPartWithFileURL:[NSURL fileURLWithPath:videoPath] name:videoName error:&error];
-        if (error && failureBlock) {
-            failureBlock(error);
-        }
-    } progress:^(NSProgress * _Nonnull uploadProgress) {
-        ///完成的百分比
-        double wanch = uploadProgress.fractionCompleted;
-        ///总的大小
-        int64_t total = uploadProgress.totalUnitCount;
-        ///已完成的
-        int64_t ywctotal = uploadProgress.completedUnitCount;
-        if (progress) {
-            progress(ywctotal, total, total-ywctotal);
-        }
-        DTLog(@"%lld, --->:%lld, --->:%lf",total,ywctotal,wanch);
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if (successBlock == nil) return ;
-        successBlock(responseObject);
-        /*NSString *resultCode = [NSString stringWithFormat:@"%@",[responseObject objectForKey:@"result_code"]];
-         NSString *resultInfo = [responseObject objectForKey:@"result_info"];
-         NSLog(@"resultInfo is %@",resultInfo);
-         if ([resultCode isEqualToString:@"1"]) {
-         if (successBlock == nil) return ;
-         successBlock(responseObject);
-         }else {
-         
-         }*/
-        if ([self isDebug]) {
-            [self logWithSuccessResponse:responseObject url:absolute params:params];
-        }
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        if (error && failureBlock) {
-            failureBlock(error);
-        }
-    }];
-    return session;
-}
-
-
 
 
 
